@@ -32,6 +32,7 @@ class WhisperModel(Enum):
     LARGE_V1 = "large-v1"
     LARGE_V2 = "large-v2"
     LARGE_V3 = "large-v3"
+    LARGE_V3_TURBO = "large-v3-turbo"
     
     # English-only models
     TINY_EN = "tiny.en"
@@ -92,6 +93,13 @@ class WhisperModel(Enum):
                 "multilingual": True,
                 "description": "Latest large model with best accuracy"
             },
+            cls.LARGE_V3_TURBO: {
+                "parameters": "809M",
+                "vram_required": "~6GB",
+                "relative_speed": "~8x",
+                "multilingual": True,
+                "description": "Optimized V3 with 4 decoder layers - 8x faster with minimal quality loss"
+            },
             cls.TINY_EN: {
                 "parameters": "39M",
                 "vram_required": "~1GB",
@@ -141,7 +149,9 @@ class WhisperModel(Enum):
             if device == "cpu":
                 return cls.BASE
             elif vram_gb >= 10:
-                return cls.LARGE_V3
+                return cls.LARGE_V3_TURBO  # Prefer turbo for better performance
+            elif vram_gb >= 6:
+                return cls.LARGE_V3_TURBO  # Turbo fits in 6GB
             elif vram_gb >= 5:
                 return cls.MEDIUM
             elif vram_gb >= 2:
@@ -280,7 +290,8 @@ def estimate_transcription_time(audio_duration_seconds: float, model: WhisperMod
         WhisperModel.MEDIUM_EN: 2,
         WhisperModel.LARGE_V1: 1,
         WhisperModel.LARGE_V2: 1,
-        WhisperModel.LARGE_V3: 1
+        WhisperModel.LARGE_V3: 1,
+        WhisperModel.LARGE_V3_TURBO: 8  # 8x faster than regular large models
     }
     
     base_time = base_time_per_second.get(device, 0.5)
@@ -439,57 +450,67 @@ def transcribe_with_whisper(
     except:
         print(f"{ULTRASINGER_HEAD} {yellow_highlighted('Warning:')} Could not estimate processing time")
     # Info: Monkey Patch FasterWhisperPipeline.detect_language to include error handling for low confidence
-    src = textwrap.dedent(inspect.getsource(whisperx.asr.FasterWhisperPipeline.detect_language))
-    # Replace the relevant part of the method
-    start_token = "if audio.shape[0] < N_SAMPLES:"
-    end_token = "return language"
-    replacement = """\
-    #Added imports
-    from modules.console_colors import ULTRASINGER_HEAD, blue_highlighted, red_highlighted
-    from Settings import Settings
-    from inputimeout import inputimeout, TimeoutOccurred
-    #End Import addition
-    if audio.shape[0] < N_SAMPLES:
-        print("Warning: audio is shorter than 30s, language detection may be inaccurate.")
-    model_n_mels = self.model.feat_kwargs.get("feature_size")
-    segment = log_mel_spectrogram(audio[: N_SAMPLES],
-                                    n_mels=model_n_mels if model_n_mels is not None else 80,
-                                    padding=0 if audio.shape[0] >= N_SAMPLES else N_SAMPLES - audio.shape[0])
-    encoder_output = self.model.encode(segment)
-    results = self.model.model.detect_language(encoder_output)
-    language_token, language_probability = results[0][0]
-    language = language_token[2:-2]
-    print(f"Detected language: {language} ({language_probability:.2f}) in first 30s of audio...")
-    #Added handling for low detection probability
-    if language_probability < Settings.CONFIDENCE_THRESHOLD:
-        print(f"{ULTRASINGER_HEAD} {red_highlighted('Warning:')} Language detection probability for detected language {language} is below {Settings.CONFIDENCE_THRESHOLD}, results may be inaccurate.")
-        print(f"{ULTRASINGER_HEAD} Override the language below or re-run with parameter {blue_highlighted('--language xx')} to specify the song language...")    
-        try:  
-            response = inputimeout(  
-                prompt=f"{ULTRASINGER_HEAD} Do you want to continue with {language} (default) or override with another language (y)? (y/n): ",  
-                timeout=Settings.CONFIDENCE_PROMPT_TIMEOUT  
-            ).strip().lower()  
-        except TimeoutOccurred:
-            import locale
-            print(f"{ULTRASINGER_HEAD} No user input received in {Settings.CONFIDENCE_PROMPT_TIMEOUT} seconds. Attempting automatic override with system locale.")
-            print(f"{ULTRASINGER_HEAD} Trying to get language from default locale...")  
-            current_locale = locale.getlocale()
-            if current_locale[0]:  
-                language_code = current_locale[0][:2].strip().lower()
-                print(f"{ULTRASINGER_HEAD} Found language code: {language_code} in locale. Setting language to {blue_highlighted(language_code)}...")
-                language = language_code   
-            else:  
-                print(f"{ULTRASINGER_HEAD} No locale is set.")  
-            response = 'n'
-        language_response = response == 'y'  
-        if language_response:
-            language = input(f"{ULTRASINGER_HEAD} Please enter the language code for the language you want to use (e.g. 'en', 'de', 'es', etc.): ").strip().lower()
-    #End addition
-    """
-    new_src = replace_code_lines(src, start_token, end_token, replacement)
-    # Compile it and execute it in the target module's namespace
-    exec(compile(new_src, "<string>", "exec"), whisperx.asr.__dict__)
-    whisperx.asr.FasterWhisperPipeline.detect_language = whisperx.asr.detect_language
+    # Note: In WhisperX v3.4.3, we need to import the asr module directly
+    try:
+        from whisperx import asr
+        src = textwrap.dedent(inspect.getsource(asr.FasterWhisperPipeline.detect_language))
+        # Replace the relevant part of the method
+        start_token = "if audio.shape[0] < N_SAMPLES:"
+        end_token = "return language"
+        replacement = """\
+        #Added imports
+        from modules.console_colors import ULTRASINGER_HEAD, blue_highlighted, red_highlighted
+        from Settings import Settings
+        from inputimeout import inputimeout, TimeoutOccurred
+        #End Import addition
+        if audio.shape[0] < N_SAMPLES:
+            print("Warning: audio is shorter than 30s, language detection may be inaccurate.")
+        model_n_mels = self.model.feat_kwargs.get("feature_size")
+        segment = log_mel_spectrogram(audio[: N_SAMPLES],
+                                        n_mels=model_n_mels if model_n_mels is not None else 80,
+                                        padding=0 if audio.shape[0] >= N_SAMPLES else N_SAMPLES - audio.shape[0])
+        encoder_output = self.model.encode(segment)
+        results = self.model.model.detect_language(encoder_output)
+        language_token, language_probability = results[0][0]
+        language = language_token[2:-2]
+        print(f"Detected language: {language} ({language_probability:.2f}) in first 30s of audio...")
+        #Added handling for low detection probability
+        if language_probability < Settings.CONFIDENCE_THRESHOLD:
+            print(f"{ULTRASINGER_HEAD} {red_highlighted('Warning:')} Language detection probability for detected language {language} is below {Settings.CONFIDENCE_THRESHOLD}, results may be inaccurate.")
+            print(f"{ULTRASINGER_HEAD} Override the language below or re-run with parameter {blue_highlighted('--language xx')} to specify the song language...")    
+            try:  
+                response = inputimeout(  
+                    prompt=f"{ULTRASINGER_HEAD} Do you want to continue with {language} (default) or override with another language (y)? (y/n): ",  
+                    timeout=Settings.CONFIDENCE_PROMPT_TIMEOUT  
+                ).strip().lower()  
+            except TimeoutOccurred:
+                import locale
+                print(f"{ULTRASINGER_HEAD} No user input received in {Settings.CONFIDENCE_PROMPT_TIMEOUT} seconds. Attempting automatic override with system locale.")
+                print(f"{ULTRASINGER_HEAD} Trying to get language from default locale...")  
+                current_locale = locale.getlocale()
+                if current_locale[0]:  
+                    language_code = current_locale[0][:2].strip().lower()
+                    print(f"{ULTRASINGER_HEAD} Found language code: {language_code} in locale. Setting language to {blue_highlighted(language_code)}...")
+                    language = language_code   
+                else:  
+                    print(f"{ULTRASINGER_HEAD} No locale is set.")  
+                response = 'n'
+            language_response = response == 'y'  
+            if language_response:
+                language = input(f"{ULTRASINGER_HEAD} Please enter the language code for the language you want to use (e.g. 'en', 'de', 'es', etc.): ").strip().lower()
+        #End addition
+        """
+        new_src = replace_code_lines(src, start_token, end_token, replacement)
+        # Compile it and execute it in the target module's namespace
+        exec(compile(new_src, "<string>", "exec"), asr.__dict__)
+        asr.FasterWhisperPipeline.detect_language = asr.detect_language
+        print(f"{ULTRASINGER_HEAD} Successfully applied language detection patch for WhisperX v3.4.3")
+    except ImportError as e:
+        print(f"{ULTRASINGER_HEAD} {red_highlighted('Warning:')} Could not apply language detection patch: {e}")
+        print(f"{ULTRASINGER_HEAD} Language detection will use default WhisperX behavior")
+    except Exception as e:
+        print(f"{ULTRASINGER_HEAD} {red_highlighted('Warning:')} Error applying language detection patch: {e}")
+        print(f"{ULTRASINGER_HEAD} Language detection will use default WhisperX behavior")
     #End Monkey Patch
 
     # Info: Regardless of the audio sampling rate used in the original audio file, whisper resample the audio signal to 16kHz (via ffmpeg). So the standard input from (44.1 or 48 kHz) should work.

@@ -355,7 +355,8 @@ class InteractiveMode:
                 "medium": {"quality": "Muito Boa", "speed": "Lenta", "memory": "~5GB"},
                 "large": {"quality": "Excelente", "speed": "Muito Lenta", "memory": "~10GB"},
                 "large-v2": {"quality": "Excelente+", "speed": "Muito Lenta", "memory": "~10GB"},
-                "large-v3": {"quality": "Superior", "speed": "Muito Lenta", "memory": "~10GB"}
+                "large-v3": {"quality": "Superior", "speed": "Muito Lenta", "memory": "~10GB"},
+                "large-v3-turbo": {"quality": "Superior", "speed": "Ultra Rápida", "memory": "~6GB"}
             }
         elif model_type == "Demucs":
             return {

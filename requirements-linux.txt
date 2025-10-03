@@ -635,7 +635,7 @@ wheel==0.45.1
     # via
     #   astunparse
     #   pyhyphen
-whisperx==3.3.1
+whisperx==3.4.3
     # via -r requirements.in
 wrapt==1.17.2
     # via tensorflow
