@@ -45,89 +45,110 @@ graph TD
 
 ## 2. Descrição da Tecnologia
 
-- **Linguagem Principal**: Python 3.10
-- **Frameworks de IA**: 
-  - Whisper/WhisperX (transcrição de áudio)
-  - Crepe (detecção de pitch)
-  - Demucs (separação de áudio)
-- **Processamento de Áudio**: 
-  - librosa (análise de áudio)
-  - torch/torchaudio (backend de IA)
-  - ffmpeg (conversão de áudio)
-- **Interface**: 
-  - argparse (CLI)
-  - rich/colorama (formatação de terminal)
-- **Geração de Arquivos**:
-  - music21 (processamento musical)
-  - mido (geração MIDI)
+* **Linguagem Principal**: Python 3.10
+
+* **Frameworks de IA**:
+
+  * Whisper/WhisperX (transcrição de áudio)
+
+  * Crepe (detecção de pitch)
+
+  * Demucs (separação de áudio)
+
+* **Processamento de Áudio**:
+
+  * librosa (análise de áudio)
+
+  * torch/torchaudio (backend de IA)
+
+  * ffmpeg (conversão de áudio)
+
+* **Interface**:
+
+  * argparse (CLI)
+
+  * rich/colorama (formatação de terminal)
+
+* **Geração de Arquivos**:
+
+  * music21 (processamento musical)
+
+  * mido (geração MIDI)
 
 ## 3. Definições de Rotas
 
-| Rota/Comando | Propósito |
-|--------------|-----------|
-| `python UltraSinger.py -i <audio>` | Processamento automático completo de arquivo de áudio |
-| `python UltraSinger.py -i <youtube_url>` | Download e processamento de vídeo do YouTube |
-| `python UltraSinger.py -i <ultrastar.txt>` | Re-pitch de arquivo UltraStar existente |
-| `python UltraSinger.py --interactive` | Modo interativo com configuração guiada |
-| `python UltraSinger.py -h` | Exibir ajuda e opções disponíveis |
+| Rota/Comando                               | Propósito                                             |
+| ------------------------------------------ | ----------------------------------------------------- |
+| `python UltraSinger.py -i <audio>`         | Processamento automático completo de arquivo de áudio |
+| `python UltraSinger.py -i <youtube_url>`   | Download e processamento de vídeo do YouTube          |
+| `python UltraSinger.py -i <ultrastar.txt>` | Re-pitch de arquivo UltraStar existente               |
+| `python UltraSinger.py --interactive`      | Modo interativo com configuração guiada               |
+| `python UltraSinger.py -h`                 | Exibir ajuda e opções disponíveis                     |
 
 ## 4. Definições de API
 
 ### 4.1 API Principal de Processamento
 
 **Função Principal de Execução**
+
 ```python
 def run() -> tuple[str, Score, Score]
 ```
 
 Parâmetros de Entrada:
-| Nome do Parâmetro | Tipo | Obrigatório | Descrição |
-|-------------------|------|-------------|-----------|
-| input_file_path | string | true | Caminho do arquivo de áudio, URL do YouTube ou arquivo UltraStar.txt |
-| output_folder_path | string | false | Pasta de saída para arquivos gerados |
-| whisper_model | WhisperModel | false | Modelo Whisper (tiny, base, small, medium, large-v2) |
-| crepe_model | string | false | Modelo Crepe (tiny, full) |
-| demucs_model | DemucsModel | false | Modelo Demucs para separação vocal |
+
+| Nome do Parâmetro    | Tipo         | Obrigatório | Descrição                                                            |
+| -------------------- | ------------ | ----------- | -------------------------------------------------------------------- |
+| input\_file\_path    | string       | true        | Caminho do arquivo de áudio, URL do YouTube ou arquivo UltraStar.txt |
+| output\_folder\_path | string       | false       | Pasta de saída para arquivos gerados                                 |
+| whisper\_model       | WhisperModel | false       | Modelo Whisper (tiny, base, small, medium, large-v2)                 |
+| crepe\_model         | string       | false       | Modelo Crepe (tiny, full)                                            |
+| demucs\_model        | DemucsModel  | false       | Modelo Demucs para separação vocal                                   |
 
 Resposta:
-| Nome do Parâmetro | Tipo | Descrição |
-|-------------------|------|-----------|
-| ultrastar_file_path | string | Caminho do arquivo UltraStar.txt gerado |
-| simple_score | Score | Pontuação simples calculada |
-| accurate_score | Score | Pontuação precisa calculada |
+
+| Nome do Parâmetro     | Tipo   | Descrição                               |
+| --------------------- | ------ | --------------------------------------- |
+| ultrastar\_file\_path | string | Caminho do arquivo UltraStar.txt gerado |
+| simple\_score         | Score  | Pontuação simples calculada             |
+| accurate\_score       | Score  | Pontuação precisa calculada             |
 
 ### 4.2 API de Separação de Áudio
 
 **Separação Vocal com Demucs**
+
 ```python
 def separate_vocal_from_audio(cache_folder_path: str, audio_output_file_path: str, use_separated_vocal: bool, create_karaoke: bool, pytorch_device: str, model: DemucsModel) -> str
 ```
 
 Parâmetros:
-| Nome do Parâmetro | Tipo | Obrigatório | Descrição |
-|-------------------|------|-------------|-----------|
-| cache_folder_path | string | true | Pasta de cache para arquivos temporários |
-| audio_output_file_path | string | true | Caminho do arquivo de áudio de entrada |
-| use_separated_vocal | boolean | true | Se deve usar vocal separado |
-| create_karaoke | boolean | true | Se deve criar versão karaokê |
-| pytorch_device | string | true | Dispositivo PyTorch (cpu/cuda) |
-| model | DemucsModel | true | Modelo Demucs a ser usado |
+
+| Nome do Parâmetro         | Tipo        | Obrigatório | Descrição                                |
+| ------------------------- | ----------- | ----------- | ---------------------------------------- |
+| cache\_folder\_path       | string      | true        | Pasta de cache para arquivos temporários |
+| audio\_output\_file\_path | string      | true        | Caminho do arquivo de áudio de entrada   |
+| use\_separated\_vocal     | boolean     | true        | Se deve usar vocal separado              |
+| create\_karaoke           | boolean     | true        | Se deve criar versão karaokê             |
+| pytorch\_device           | string      | true        | Dispositivo PyTorch (cpu/cuda)           |
+| model                     | DemucsModel | true        | Modelo Demucs a ser usado                |
 
 ### 4.3 API de Transcrição
 
 **Transcrição com Whisper**
+
 ```python
 def transcribe_with_whisper(audio_path: str, model: WhisperModel, device: str, alignment_model: str, batch_size: int, compute_type: str, language: str, keep_numbers: bool) -> TranscriptionResult
 ```
 
 Parâmetros:
-| Nome do Parâmetro | Tipo | Obrigatório | Descrição |
-|-------------------|------|-------------|-----------|
-| audio_path | string | true | Caminho do arquivo de áudio |
-| model | WhisperModel | true | Modelo Whisper a ser usado |
-| device | string | false | Dispositivo de processamento (cpu/cuda) |
-| language | string | false | Código do idioma (en, pt, es, etc.) |
-| batch_size | integer | false | Tamanho do batch para processamento |
+
+| Nome do Parâmetro | Tipo         | Obrigatório | Descrição                               |
+| ----------------- | ------------ | ----------- | --------------------------------------- |
+| audio\_path       | string       | true        | Caminho do arquivo de áudio             |
+| model             | WhisperModel | true        | Modelo Whisper a ser usado              |
+| device            | string       | false       | Dispositivo de processamento (cpu/cuda) |
+| language          | string       | false       | Código do idioma (en, pt, es, etc.)     |
+| batch\_size       | integer      | false       | Tamanho do batch para processamento     |
 
 ## 5. Diagrama da Arquitetura do Servidor
 
@@ -225,6 +246,7 @@ erDiagram
 ### 6.2 Estruturas de Dados Principais
 
 **Classe ProcessData**
+
 ```python
 class ProcessData:
     def __init__(self):
@@ -238,6 +260,7 @@ class ProcessData:
 ```
 
 **Classe TranscribedData**
+
 ```python
 class TranscribedData:
     def __init__(self):
@@ -249,6 +272,7 @@ class TranscribedData:
 ```
 
 **Classe MidiSegment**
+
 ```python
 class MidiSegment:
     def __init__(self):
@@ -260,6 +284,7 @@ class MidiSegment:
 ```
 
 **Enumerações de Modelos**
+
 ```python
 class WhisperModel(Enum):
     TINY = "tiny"
@@ -277,6 +302,7 @@ class DemucsModel(Enum):
 ```
 
 **Configurações do Sistema**
+
 ```python
 class Settings:
     def __init__(self):
@@ -292,3 +318,4 @@ class Settings:
         self.create_midi: bool = True
         self.format_version: FormatVersion = FormatVersion.V1_2_0
 ```
+

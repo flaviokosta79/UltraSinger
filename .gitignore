@@ -6,12 +6,65 @@ venv
 
 # python
 **__pycache__
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
 
 # test data
 test_input
 test_output
 
 # default output folder
-output
+output/
+
+# logs
+logs/
+*.log
+
+# cache
+cache/
+*.cache
+
+# temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# UltraSinger specific
 /UltraSinger*.spec
 /registry_path.txt
+interactive_settings_cache.json
+
+# Model files (large files)
+*.pt
+*.pth
+*.onnx
+*.bin
+
+# Audio/Video files (examples)
+*.wav
+*.mp3
+*.mp4
+*.avi
+*.mkv
+*.flac
+*.ogg

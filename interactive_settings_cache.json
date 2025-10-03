@@ -1,2 +1,13 @@
 {
-  "whisper_model": 
+  "whisper_model": "large-v2",
+  "demucs_model": "htdemucs",
+  "language": null,
+  "whisper_batch_size": 16,
+  "whisper_compute_type": null,
+  "force_cpu": false,
+  "keep_cache": false,
+  "create_midi": true,
+  "create_plot": false,
+  "hyphenation": true,
+  "timestamp": 1759520192.2249687
+}

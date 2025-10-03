@@ -16,5 +16,23 @@
     "duration": 180,
     "download_path": "C:\\Users\\Flavio\\AppData\\Local\\Temp\\tmpe7352md0\\Colin Linden - Test Song",
     "url": "https://youtube.com/watch?v=test123"
+  },
+  {
+    "timestamp": "2025-10-03T14:53:51.650421",
+    "video_id": "YVJijQIualA",
+    "title": "Vitor Kley  - O Sol  (Videoclipe Oficial)",
+    "channel": "Midas Music",
+    "duration": 216,
+    "download_path": "E:\\TraeAI\\Projects\\UltraSingerX\\output\\Vitor Kley - O Sol",
+    "url": "https://youtube.com/watch?v=YVJijQIualA"
+  },
+  {
+    "timestamp": "2025-10-03T16:37:07.036855",
+    "video_id": "VSXT4a2kRHA",
+    "title": "Teddy Swims - The Door (Official Music Video)",
+    "channel": "Teddy Swims",
+    "duration": 212,
+    "download_path": "E:\\TraeAI\\Projects\\UltraSingerX\\output\\Teddy Swims - The Door",
+    "url": "https://youtube.com/watch?v=VSXT4a2kRHA"
   }
 ]
