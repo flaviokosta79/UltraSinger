@@ -1,0 +1,24 @@
+{
+  "timestamp": "20251003_011607",
+  "category": "audio_processing",
+  "severity": "high",
+  "module": "__main__",
+  "message": "Erro simulado",
+  "details": "Traceback (most recent call last):\n  File \"E:\\TraeAI\\Projects\\UltraSingerX\\src\\modules\\error_handler.py\", line 457, in wrapper\n    return func(*args, **kwargs)\n  File \"E:\\TraeAI\\Projects\\UltraSingerX\\test_error_handling.py\", line 249, in function_with_error\n    raise ValueError(\"Erro simulado\")\nValueError: Erro simulado\n",
+  "suggestions": [
+    "Verifique se o arquivo de áudio não está corrompido",
+    "Tente converter o áudio para um formato suportado",
+    "Reduza a qualidade ou duração do áudio se necessário"
+  ],
+  "context": {
+    "function": "function_with_error",
+    "args": "()",
+    "kwargs": "{}"
+  },
+  "error_code": null,
+  "system_info": {
+    "platform": "win32",
+    "python_version": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+    "working_directory": "E:\\TraeAI\\Projects\\UltraSingerX"
+  }
+}

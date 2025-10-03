@@ -1,0 +1,629 @@
+[2025-10-03 01:15:01] [ERROR] [UltraSinger.TestModule] [error:168] Valor inválido para teste | Exception: ValueError: Valor inválido para teste | Context: {'category': 'validation', 'severity': 'medium', 'test_param': 'test_value'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 131, in test_error_handler
+    raise ValueError("Valor inválido para teste")
+ValueError: Valor inválido para teste
+[2025-10-03 01:15:01] [CRITICAL] [UltraSinger.WhisperModule] [critical:180] Modelo não carregado | Context: {'category': 'ai_model', 'severity': 'high'}
+[2025-10-03 01:15:01] [CRITICAL] [UltraSinger.__main__] [critical:180] Erro simulado | Exception: ValueError: Erro simulado | Context: {'category': 'audio_processing', 'severity': 'high', 'function': 'function_with_error', 'args': '()', 'kwargs': '{}'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\src\modules\error_handler.py", line 457, in wrapper
+    return func(*args, **kwargs)
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 249, in function_with_error
+    raise ValueError("Erro simulado")
+ValueError: Erro simulado
+[2025-10-03 01:15:01] [ERROR] [UltraSinger.__main__] [error:168] Erro que será re-lançado | Exception: ValueError: Erro que será re-lançado | Context: {'category': 'validation', 'severity': 'medium', 'function': 'function_with_reraise', 'args': '()', 'kwargs': '{}'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\src\modules\error_handler.py", line 457, in wrapper
+    return func(*args, **kwargs)
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 263, in function_with_reraise
+    raise ValueError("Erro que será re-lançado")
+ValueError: Erro que será re-lançado
+[2025-10-03 01:15:01] [ERROR] [UltraSinger.__main__] [error:168] Falha simulada | Exception: ValueError: Falha simulada | Context: {'category': 'unknown', 'severity': 'medium', 'function': 'function_that_fails'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\src\modules\error_handler.py", line 488, in safe_execute
+    return func(*args, **kwargs)
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 282, in function_that_fails
+    raise ValueError("Falha simulada")
+ValueError: Falha simulada
+[2025-10-03 01:15:05] [ERROR] [UltraSinger.Core] [error:168] Arquivo não encontrado | Exception: FileNotFoundError: Arquivo não encontrado | Context: {'category': 'file_io', 'severity': 'medium'}
+NoneType: None
+[2025-10-03 01:15:05] [ERROR] [UltraSinger.Core] [error:168] Permissão negada | Exception: PermissionError: Permissão negada | Context: {'category': 'file_io', 'severity': 'medium'}
+NoneType: None
+[2025-10-03 01:15:05] [ERROR] [UltraSinger.Core] [error:168] Sem memória | Exception: MemoryError: Sem memória | Context: {'category': 'system_resource', 'severity': 'medium'}
+NoneType: None
+[2025-10-03 01:15:05] [ERROR] [UltraSinger.Core] [error:168] Valor inválido | Exception: ValueError: Valor inválido | Context: {'category': 'validation', 'severity': 'medium'}
+NoneType: None
+[2025-10-03 01:15:05] [CRITICAL] [UltraSinger.TestModule] [critical:180] Erro crítico para teste | Exception: RuntimeError: Erro crítico para teste | Context: {'category': 'system_resource', 'severity': 'critical'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 366, in test_error_reporting
+    raise RuntimeError("Erro crítico para teste")
+RuntimeError: Erro crítico para teste
+[2025-10-03 01:16:07] [ERROR] [UltraSinger.TestModule] [error:168] Valor inválido para teste | Exception: ValueError: Valor inválido para teste | Context: {'category': 'validation', 'severity': 'medium', 'test_param': 'test_value'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 131, in test_error_handler
+    raise ValueError("Valor inválido para teste")
+ValueError: Valor inválido para teste
+[2025-10-03 01:16:07] [CRITICAL] [UltraSinger.WhisperModule] [critical:180] Modelo não carregado | Context: {'category': 'ai_model', 'severity': 'high'}
+[2025-10-03 01:16:07] [CRITICAL] [UltraSinger.__main__] [critical:180] Erro simulado | Exception: ValueError: Erro simulado | Context: {'category': 'audio_processing', 'severity': 'high', 'function': 'function_with_error', 'args': '()', 'kwargs': '{}'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\src\modules\error_handler.py", line 457, in wrapper
+    return func(*args, **kwargs)
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 249, in function_with_error
+    raise ValueError("Erro simulado")
+ValueError: Erro simulado
+[2025-10-03 01:16:07] [ERROR] [UltraSinger.__main__] [error:168] Erro que será re-lançado | Exception: ValueError: Erro que será re-lançado | Context: {'category': 'validation', 'severity': 'medium', 'function': 'function_with_reraise', 'args': '()', 'kwargs': '{}'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\src\modules\error_handler.py", line 457, in wrapper
+    return func(*args, **kwargs)
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 263, in function_with_reraise
+    raise ValueError("Erro que será re-lançado")
+ValueError: Erro que será re-lançado
+[2025-10-03 01:16:07] [ERROR] [UltraSinger.__main__] [error:168] Falha simulada | Exception: ValueError: Falha simulada | Context: {'category': 'unknown', 'severity': 'medium', 'function': 'function_that_fails'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\src\modules\error_handler.py", line 488, in safe_execute
+    return func(*args, **kwargs)
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 282, in function_that_fails
+    raise ValueError("Falha simulada")
+ValueError: Falha simulada
+[2025-10-03 01:16:10] [ERROR] [UltraSinger.Core] [error:168] Arquivo não encontrado | Exception: FileNotFoundError: Arquivo não encontrado | Context: {'category': 'file_io', 'severity': 'medium'}
+NoneType: None
+[2025-10-03 01:16:10] [ERROR] [UltraSinger.Core] [error:168] Permissão negada | Exception: PermissionError: Permissão negada | Context: {'category': 'file_io', 'severity': 'medium'}
+NoneType: None
+[2025-10-03 01:16:10] [ERROR] [UltraSinger.Core] [error:168] Sem memória | Exception: MemoryError: Sem memória | Context: {'category': 'system_resource', 'severity': 'medium'}
+NoneType: None
+[2025-10-03 01:16:10] [ERROR] [UltraSinger.Core] [error:168] Valor inválido | Exception: ValueError: Valor inválido | Context: {'category': 'validation', 'severity': 'medium'}
+NoneType: None
+[2025-10-03 01:16:10] [CRITICAL] [UltraSinger.TestModule] [critical:180] Erro crítico para teste | Exception: RuntimeError: Erro crítico para teste | Context: {'category': 'system_resource', 'severity': 'critical'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_error_handling.py", line 366, in test_error_reporting
+    raise RuntimeError("Erro crítico para teste")
+RuntimeError: Erro crítico para teste
+[2025-10-03 01:21:59] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:21:59] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:21:59] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:22:00] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:22:00] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:22:00] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:22:00] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:22:00] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:22:00] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:22:00] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:22:00] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:22:00] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:22:00] [ERROR] [UltraSinger.Performance] [error:168] Erro no monitoramento de performance: 'str' object cannot be interpreted as an integer
+[2025-10-03 01:22:00] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 'integration_test'}
+[2025-10-03 01:22:00] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:22:00] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:22:00] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:22:00] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:22:00] [ERROR] [UltraSinger.Core] [error:168] Erro no fluxo completo: 'UltrastarScoreCalculator' object has no attribute 'calculate_song_score'
+[2025-10-03 01:23:50] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:23:50] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:23:50] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:23:51] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:23:51] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:23:51] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:23:51] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:23:51] [ERROR] [UltraSinger.Performance] [error:168] Erro no monitoramento de performance: 'str' object cannot be interpreted as an integer
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 'integration_test'}
+[2025-10-03 01:23:51] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:23:51] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:23:51] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:23:51] [ERROR] [UltraSinger.Performance] [error:168] Erro no monitoramento de performance: 'str' object cannot be interpreted as an integer
+[2025-10-03 01:23:51] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 'complete_workflow'}
+[2025-10-03 01:23:51] [ERROR] [UltraSinger.Core] [error:168] Erro no fluxo completo: 'UltrastarScoreCalculator' object has no attribute 'calculate_song_score'
+[2025-10-03 01:24:18] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:24:18] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:24:18] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:24:19] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:24:19] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:24:19] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:24:19] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:24:19] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:24:19] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:24:19] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:24:19] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:24:19] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:24:19] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:24:19] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:24:19] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:24:19] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:24:20] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:24:20] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:24:20] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:24:20] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:24:20] [ERROR] [UltraSinger.Core] [error:168] Erro no fluxo completo: 'UltrastarScoreCalculator' object has no attribute 'calculate_song_score'
+[2025-10-03 01:25:19] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:25:19] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:25:19] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:25:20] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:25:20] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:25:20] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:25:20] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:25:20] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:25:20] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:25:20] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:25:20] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:25:20] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:25:20] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:25:20] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:25:20] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:25:20] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:25:21] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:25:21] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:25:21] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:25:21] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:25:21] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:25:21] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmpel1yimuf\teste_completo.txt
+[2025-10-03 01:25:21] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmpel1yimuf\teste_completo.png
+[2025-10-03 01:25:22] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:25:22] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:26:29] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:26:29] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:26:29] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:26:30] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:26:30] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:26:30] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:26:30] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:26:30] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:26:30] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:26:30] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:26:30] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:26:30] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:26:30] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:26:30] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:26:30] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:26:30] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:26:31] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:26:31] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:26:31] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:26:31] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:26:31] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:26:31] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmpiihnycwa\teste_completo.txt
+[2025-10-03 01:26:31] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmpiihnycwa\teste_completo.png
+[2025-10-03 01:26:32] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:26:32] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:26:55] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:26:55] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:26:55] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:26:56] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:26:56] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:26:56] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:26:56] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:26:56] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:26:56] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:26:56] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:26:56] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:26:56] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:26:56] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:26:56] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:26:56] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:26:56] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:26:57] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:26:57] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:26:57] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:26:57] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:26:57] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:26:57] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmpcgq2whzr\teste_completo.txt
+[2025-10-03 01:26:57] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmpcgq2whzr\teste_completo.png
+[2025-10-03 01:26:58] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:26:58] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:28:12] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:28:12] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:28:12] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:28:13] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:28:13] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:28:13] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:28:13] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:28:13] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:28:13] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:28:13] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:28:13] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:28:13] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:28:13] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:28:13] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:28:13] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:28:13] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:28:14] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:28:14] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:28:14] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:28:14] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:28:14] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:28:14] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmp2wm4bgj1\teste_completo.txt
+[2025-10-03 01:28:14] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmp2wm4bgj1\teste_completo.png
+[2025-10-03 01:28:15] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:28:15] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:28:37] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:28:37] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:28:37] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:28:38] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:28:38] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:28:38] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:28:38] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:28:38] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:28:38] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:28:38] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:28:38] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:28:38] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:28:38] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:28:38] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:28:38] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:28:38] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:28:39] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:28:39] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:28:39] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:28:39] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:28:39] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:28:39] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmp9oqad0ww\teste_completo.txt
+[2025-10-03 01:28:39] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmp9oqad0ww\teste_completo.png
+[2025-10-03 01:28:40] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:28:40] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:28:52] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:28:52] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:28:52] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:28:53] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:28:53] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:28:53] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:28:53] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:28:53] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:28:53] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:28:53] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:28:53] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:28:53] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:28:53] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:28:53] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:28:53] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:28:53] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:28:54] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:28:54] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:28:54] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:28:54] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:28:54] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:28:54] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmpom8mkh4k\teste_completo.txt
+[2025-10-03 01:28:54] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmpom8mkh4k\teste_completo.png
+[2025-10-03 01:28:55] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:28:55] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:30:32] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:30:32] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:30:32] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:30:33] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:30:33] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:30:33] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:30:33] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:30:33] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:30:33] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:30:33] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:30:33] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:30:33] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:30:33] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:30:33] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:30:33] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:30:33] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:30:34] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:30:34] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:30:34] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:30:34] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:30:34] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:30:34] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmpjdcwp0my\teste_completo.txt
+[2025-10-03 01:30:34] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmpjdcwp0my\teste_completo.png
+[2025-10-03 01:30:35] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:30:35] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:30:52] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:30:52] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:30:52] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:30:53] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:30:53] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:30:53] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:30:53] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:30:53] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:30:53] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:30:53] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:30:53] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:30:53] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:30:53] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:30:53] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:30:53] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:30:53] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:30:54] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:30:54] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:30:54] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:30:54] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:30:54] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:30:54] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmp_9fzll8g\teste_completo.txt
+[2025-10-03 01:30:54] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmp_9fzll8g\teste_completo.png
+[2025-10-03 01:30:55] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:30:55] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:31:27] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:31:27] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:31:27] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:31:28] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:31:28] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:31:28] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:31:28] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:31:28] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:31:28] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:31:28] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:31:28] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:31:28] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:31:28] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:31:28] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:31:28] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:31:28] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:31:29] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:31:29] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:31:29] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:31:29] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:31:29] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:31:29] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmplb7ujox7\teste_completo.txt
+[2025-10-03 01:31:29] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmplb7ujox7\teste_completo.png
+[2025-10-03 01:31:30] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:31:30] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:31:42] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:31:42] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:31:42] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:31:43] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:31:43] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:31:43] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:31:43] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:31:43] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:31:43] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:31:43] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:31:43] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:31:43] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:31:43] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:31:43] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 318, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:31:43] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:31:43] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:31:44] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:31:44] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:31:44] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:31:44] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:31:44] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:31:44] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmp68g7dla9\teste_completo.txt
+[2025-10-03 01:31:44] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmp68g7dla9\teste_completo.png
+[2025-10-03 01:31:45] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:31:45] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:32:41] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:32:41] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:32:41] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:32:42] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:32:42] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:32:42] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:32:42] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:32:42] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:32:42] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:32:42] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:32:42] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:32:42] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:32:42] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:32:42] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 320, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:32:42] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:32:42] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:32:43] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:32:43] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:32:43] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:32:43] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:32:43] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:32:43] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmpr6d9e1ou\teste_completo.txt
+[2025-10-03 01:32:43] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmpr6d9e1ou\teste_completo.png
+[2025-10-03 01:32:44] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:32:44] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:32:57] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:32:57] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:32:57] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:32:58] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:32:58] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:32:58] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:32:58] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:32:58] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:32:58] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:32:58] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:32:58] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:32:58] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:32:58] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:32:58] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 320, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:32:58] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:32:58] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:32:59] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:32:59] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:32:59] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:32:59] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:32:59] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:32:59] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmpwpndhott\teste_completo.txt
+[2025-10-03 01:32:59] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmpwpndhott\teste_completo.png
+[2025-10-03 01:33:00] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:33:00] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:33:10] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:33:10] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:33:10] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:33:11] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:33:11] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:33:11] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:33:11] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:33:11] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:33:11] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:33:11] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:33:11] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:33:11] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:33:11] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:33:11] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 320, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:33:11] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:33:11] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:33:12] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:33:12] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:33:12] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:33:12] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:33:12] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:33:12] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmpl2xpmihh\teste_completo.txt
+[2025-10-03 01:33:12] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmpl2xpmihh\teste_completo.png
+[2025-10-03 01:33:13] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:33:13] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:33:28] [INFO] [UltraSinger.Core] [info:149] Sistema de logging configurado | {'log_level': 'INFO', 'log_dir': 'logs'}
+[2025-10-03 01:33:28] [INFO] [UltraSinger.ErrorHandler] [info:149] Manipulador global de exceções configurado
+[2025-10-03 01:33:28] [INFO] [UltraSinger.Performance] [info:149] Detectando recursos do sistema
+[2025-10-03 01:33:29] [INFO] [UltraSinger.Performance] [info:149] Configurações de otimização criadas | {'device': 'cpu', 'mode': 'balanced', 'batch_size': 2}
+[2025-10-03 01:33:29] [INFO] [UltraSinger.Performance] [info:149] Ambiente configurado para otimização
+[2025-10-03 01:33:29] [INFO] [UltraSinger.Core] [info:149] Teste de log de informação
+[2025-10-03 01:33:29] [WARNING] [UltraSinger.Core] [warning:156] Teste de log de aviso
+[2025-10-03 01:33:29] [ERROR] [UltraSinger.Core] [error:168] Teste de log de erro
+[2025-10-03 01:33:29] [INFO] [UltraSinger.Core] [info:149] Teste com contexto | {'extra': {'module': 'IntegrationTest', 'operation': 'test_logger_integration'}}
+[2025-10-03 01:33:29] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro de teste para integração | Exception: ValueError: Erro de teste para integração | Context: {'category': 'unknown', 'severity': 'medium'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 103, in test_error_handler_integration
+    raise ValueError("Erro de teste para integração")
+ValueError: Erro de teste para integração
+[2025-10-03 01:33:29] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:33:29] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de integração entre módulos
+[2025-10-03 01:33:29] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:33:29] [ERROR] [UltraSinger.IntegrationTest] [error:168] Erro simulado para teste de integração | Exception: RuntimeError: Erro simulado para teste de integração | Context: {'category': 'unknown', 'severity': 'medium', 'operation': 'cross_module_test'}
+Traceback (most recent call last):
+  File "E:\TraeAI\Projects\UltraSingerX\test_integration_complete.py", line 320, in test_cross_module_integration
+    raise RuntimeError("Erro simulado para teste de integração")
+RuntimeError: Erro simulado para teste de integração
+[2025-10-03 01:33:29] [INFO] [UltraSinger.IntegrationTest] [info:149] Sugestões: Consulte a documentação ou reporte o erro
+[2025-10-03 01:33:29] [ERROR] [UltraSinger.Core] [error:168] Erro tratado: Erro simulado para teste de integração
+[2025-10-03 01:33:30] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:33:30] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado
+[2025-10-03 01:33:30] [INFO] [UltraSinger.Core] [info:149] Iniciando teste de fluxo completo
+[2025-10-03 01:33:30] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance iniciado | {'interval': 1.0}
+[2025-10-03 01:33:30] [INFO] [UltraSinger.Core] [info:149] Pontuação calculada: 5
+[2025-10-03 01:33:30] [INFO] [UltraSinger.Core] [info:149] Arquivo UltraStar criado: C:\Users\Flavio\AppData\Local\Temp\tmpjmc_3t30\teste_completo.txt
+[2025-10-03 01:33:30] [INFO] [UltraSinger.Core] [info:149] Partitura gerada: C:\Users\Flavio\AppData\Local\Temp\tmpjmc_3t30\teste_completo.png
+[2025-10-03 01:33:31] [INFO] [UltraSinger.Performance] [info:149] Monitoramento de performance parado
+[2025-10-03 01:33:31] [INFO] [UltraSinger.Core] [info:149] Monitoramento finalizado

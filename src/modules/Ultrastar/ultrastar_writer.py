@@ -1,10 +1,14 @@
 """Ultrastar writer module"""
 
 import re
+import os
 import langcodes
 from packaging import version
+from typing import Optional, List, Dict, Any
+import json
+from datetime import datetime
 
-from modules.console_colors import ULTRASINGER_HEAD
+from modules.console_colors import ULTRASINGER_HEAD, red_highlighted, green_highlighted, blue_highlighted
 from modules.Ultrastar.coverter.ultrastar_converter import (
     real_bpm_to_ultrastar_bpm,
     second_to_beat, )
@@ -239,7 +243,92 @@ def add_score_to_ultrastar_txt(ultrastar_file_output: str, score: Score) -> None
 
 
 class UltraStarWriter:
-    """Docstring"""
+    """Enhanced UltraStar file writer with advanced features"""
+    
+    def __init__(self, cache_folder: Optional[str] = None):
+        self.cache_folder = cache_folder
+        self.validation_errors = []
+        
+    def validate_ultrastar_data(self, ultrastar_class: UltrastarTxtValue, midi_segments: List[MidiSegment]) -> bool:
+        """Validate UltraStar data before writing"""
+        self.validation_errors = []
+        
+        # Validate required fields
+        if not ultrastar_class.artist:
+            self.validation_errors.append("Artist is required")
+        if not ultrastar_class.title:
+            self.validation_errors.append("Title is required")
+        if not ultrastar_class.mp3:
+            self.validation_errors.append("MP3 file is required")
+            
+        # Validate MIDI segments
+        if not midi_segments:
+            self.validation_errors.append("No MIDI segments found")
+        else:
+            for i, segment in enumerate(midi_segments):
+                if segment.start >= segment.end:
+                    self.validation_errors.append(f"Invalid timing in segment {i}: start >= end")
+                if not segment.word.strip():
+                    self.validation_errors.append(f"Empty word in segment {i}")
+                    
+        return len(self.validation_errors) == 0
+    
+    def get_validation_errors(self) -> List[str]:
+        """Get validation errors"""
+        return self.validation_errors
+    
+    def create_backup(self, file_path: str) -> Optional[str]:
+        """Create backup of existing file"""
+        if os.path.exists(file_path):
+            backup_path = f"{file_path}.backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            try:
+                import shutil
+                shutil.copy2(file_path, backup_path)
+                print(f"{ULTRASINGER_HEAD} Backup created: {backup_path}")
+                return backup_path
+            except Exception as e:
+                print(f"{ULTRASINGER_HEAD} {red_highlighted('Failed to create backup:')} {e}")
+        return None
+    
+    def save_metadata(self, ultrastar_class: UltrastarTxtValue, output_path: str):
+        """Save metadata to cache for future use"""
+        if not self.cache_folder:
+            return
+            
+        metadata = {
+            "artist": ultrastar_class.artist,
+            "title": ultrastar_class.title,
+            "year": ultrastar_class.year,
+            "language": ultrastar_class.language,
+            "genre": ultrastar_class.genre,
+            "creator": ultrastar_class.creator,
+            "version": ultrastar_class.version,
+            "created_at": datetime.now().isoformat(),
+            "output_path": output_path
+        }
+        
+        try:
+            os.makedirs(self.cache_folder, exist_ok=True)
+            metadata_file = os.path.join(self.cache_folder, "ultrastar_metadata.json")
+            
+            # Load existing metadata
+            existing_metadata = []
+            if os.path.exists(metadata_file):
+                with open(metadata_file, 'r', encoding='utf-8') as f:
+                    existing_metadata = json.load(f)
+            
+            # Add new metadata
+            existing_metadata.append(metadata)
+            
+            # Keep only last 100 entries
+            if len(existing_metadata) > 100:
+                existing_metadata = existing_metadata[-100:]
+            
+            with open(metadata_file, 'w', encoding='utf-8') as f:
+                json.dump(existing_metadata, f, indent=2, ensure_ascii=False)
+                
+        except Exception as e:
+            print(f"{ULTRASINGER_HEAD} {red_highlighted('Failed to save metadata:')} {e}")
 
 
 def format_separated_string(data: str) -> str:

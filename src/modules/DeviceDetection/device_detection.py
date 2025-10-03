@@ -51,3 +51,16 @@ def __check_pytorch_support():
                 f"{ULTRASINGER_HEAD} {red_highlighted('GPU VRAM is less than 6GB. Program may crash due to insufficient memory.')}")
         print(f"{ULTRASINGER_HEAD} {blue_highlighted('pytorch')} - using {red_highlighted('cuda')} gpu.")
     return pytorch_gpu_supported
+
+
+def detect_optimal_device() -> str:
+    """Detect the optimal device for processing"""
+    tensorflow_device, pytorch_device = check_gpu_support()
+    
+    # Return the best available device
+    if pytorch_device == 'cuda':
+        return 'cuda'
+    elif tensorflow_device == 'cuda':
+        return 'cuda'
+    else:
+        return 'cpu'

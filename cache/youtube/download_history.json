@@ -1,0 +1,20 @@
+[
+  {
+    "timestamp": "2025-10-03T01:04:06.935122",
+    "video_id": "test123",
+    "title": "Test Song",
+    "channel": "",
+    "duration": 180,
+    "download_path": "C:\\Users\\Flavio\\AppData\\Local\\Temp\\tmpe7352md0\\a basement - test song",
+    "url": "https://youtube.com/watch?v=test123"
+  },
+  {
+    "timestamp": "2025-10-03T01:04:15.050375",
+    "video_id": "test123",
+    "title": "Test Song",
+    "channel": "",
+    "duration": 180,
+    "download_path": "C:\\Users\\Flavio\\AppData\\Local\\Temp\\tmpe7352md0\\Colin Linden - Test Song",
+    "url": "https://youtube.com/watch?v=test123"
+  }
+]

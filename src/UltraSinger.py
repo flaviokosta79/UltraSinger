@@ -622,7 +622,7 @@ def init_settings(argv: list[str]) -> Settings:
         print_help()
         sys.exit()
     for opt, arg in opts:
-        if opt == "-h":
+        if opt in ("-h", "--help"):
             print_help()
             sys.exit()
         elif opt in ("-i", "--ifile"):
@@ -718,6 +718,7 @@ def init_settings(argv: list[str]) -> Settings:
 def arg_options():
     short = "hi:o:amv:"
     long = [
+        "help",
         "ifile=",
         "ofile=",
         "crepe=",
