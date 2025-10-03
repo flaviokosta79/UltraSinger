@@ -6,6 +6,7 @@ from pydub import AudioSegment, silence
 
 from modules.console_colors import ULTRASINGER_HEAD
 from modules.Speech_Recognition.TranscribedData import TranscribedData
+from Settings import Settings
 
 def remove_silence_from_transcription_data(audio_path: str, transcribed_data: list[TranscribedData]) -> list[
     TranscribedData]:
@@ -30,6 +31,8 @@ def get_silence_sections(audio_path: str,
 
 
 def remove_silence(silence_parts_list: list[tuple[float, float]], transcribed_data: list[TranscribedData]):
+    settings = Settings()
+    
     new_transcribed_data = []
 
     for data in transcribed_data:
@@ -55,14 +58,17 @@ def remove_silence(silence_parts_list: list[tuple[float, float]], transcribed_da
                     split_end = silence_parts_list[next_index][0]
 
                     if silence_parts_list[next_index][1] >= origin_end:
-                        split_word = "~ "
+                        # Só adiciona ~ se hyphenation estiver habilitado
+                        split_word = "~ " if settings.hyphenation else " "
                         is_word_end = True
                     else:
-                        split_word = "~"
+                        # Só adiciona ~ se hyphenation estiver habilitado
+                        split_word = "~" if settings.hyphenation else ""
                         is_word_end = False
                 else:
                     split_end = origin_end
-                    split_word = "~ "
+                    # Só adiciona ~ se hyphenation estiver habilitado
+                    split_word = "~ " if settings.hyphenation else " "
                     is_word_end = True
 
                 split_data = TranscribedData(confidence=data.confidence, word=split_word, end=split_end, start=silence_end, is_word_end=is_word_end)
@@ -81,14 +87,18 @@ def remove_silence(silence_parts_list: list[tuple[float, float]], transcribed_da
                     data.is_word_end = False
 
                     # Remove last whitespace from the data.word
-                    if data.word[-1] == " ":
+                    if data.word and len(data.word) > 0 and data.word[-1] == " ":
                         data.word = data.word[:-1]
 
                 if split_data.end - split_data.start > 0.1:
                     was_split = True
                     new_transcribed_data.append(split_data)
-                elif split_word == "~ " and not data.is_word_end:
-                    if new_transcribed_data[-1].word[-1] != " ":
+                elif (split_word == "~ " or split_word == " ") and not data.is_word_end:
+                    # Verificar se existe dados e se a palavra não está vazia
+                    if (new_transcribed_data and 
+                        new_transcribed_data[-1].word and 
+                        len(new_transcribed_data[-1].word) > 0 and 
+                        new_transcribed_data[-1].word[-1] != " "):
                         new_transcribed_data[-1].word += " "
                     new_transcribed_data[-1].is_word_end = True
 

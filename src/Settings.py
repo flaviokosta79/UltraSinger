@@ -15,10 +15,10 @@ class Settings:
     CONFIDENCE_THRESHOLD = 0.6
     CONFIDENCE_PROMPT_TIMEOUT = 4
 
-    create_midi = True
+    create_midi = False
     create_plot = False
     create_audio_chunks = False
-    hyphenation = True
+    hyphenation = False
     use_separated_vocal = True
     create_karaoke = True
     ignore_audio = False

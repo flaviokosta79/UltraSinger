@@ -429,11 +429,11 @@ class InteractiveMode:
         """Configurar opções de saída"""
         self.console.print("\n[bold cyan]Opções de Saída:[/bold cyan]")
         
-        settings.create_midi = Confirm.ask("Criar arquivo MIDI?", default=True)
+        settings.create_midi = Confirm.ask("Criar arquivo MIDI?", default=False)
         settings.create_plot = Confirm.ask("Criar gráfico de pitch?", default=False)
         settings.create_karaoke = Confirm.ask("Criar arquivo de karaokê?", default=True)
         settings.create_audio_chunks = Confirm.ask("Criar chunks de áudio?", default=False)
-        settings.hyphenation = Confirm.ask("Usar hifenização?", default=True)
+        settings.hyphenation = Confirm.ask("Usar hifenização?", default=False)
         
     def _configure_device_options(self, settings: Settings) -> None:
         """Configurar opções de dispositivo"""
@@ -536,9 +536,9 @@ class InteractiveMode:
                 "whisper_compute_type": getattr(settings, 'whisper_compute_type', 'float16'),
                 "force_cpu": getattr(settings, 'force_cpu', False),
                 "keep_cache": getattr(settings, 'keep_cache', False),
-                "create_midi": getattr(settings, 'create_midi', True),
+                "create_midi": getattr(settings, 'create_midi', False),
                 "create_plot": getattr(settings, 'create_plot', False),
-                "hyphenation": getattr(settings, 'hyphenation', True),
+                "hyphenation": getattr(settings, 'hyphenation', False),
                 "timestamp": time.time()
             }
             
@@ -641,9 +641,9 @@ class InteractiveMode:
             settings.whisper_compute_type = cache.get('whisper_compute_type', 'float16')
             settings.force_cpu = cache.get('force_cpu', False)
             settings.keep_cache = cache.get('keep_cache', False)
-            settings.create_midi = cache.get('create_midi', True)
+            settings.create_midi = cache.get('create_midi', False)
             settings.create_plot = cache.get('create_plot', False)
-            settings.hyphenation = cache.get('hyphenation', True)
+            settings.hyphenation = cache.get('hyphenation', False)
             
             self.console.print(f"{self.header} [green]✓[/green] Configurações carregadas do cache")
             

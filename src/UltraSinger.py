@@ -223,6 +223,10 @@ def split_syllables_into_segments(
         transcribed_data: list[TranscribedData],
         real_bpm: float) -> list[TranscribedData]:
     """Split every syllable into sub-segments"""
+    # Só processa se hyphenation estiver habilitado
+    if not settings.hyphenation:
+        return transcribed_data
+        
     syllable_segment_size = get_sixteenth_note_second(real_bpm)
 
     segment_size_decimal_points = len(str(syllable_segment_size).split(".")[1])
@@ -299,7 +303,8 @@ def merge_syllable_segments(midi_segments: list[MidiSegment],
         if previous_data is not None:
             has_breath_pause = (data.start - previous_data.end) > sixteenth_note
 
-        if (str(data.word).startswith("~")
+        # Só processa símbolos ~ se hyphenation estiver habilitado
+        if (settings.hyphenation and str(data.word).startswith("~")
                 and previous_data is not None
                 and (is_note_short or is_same_note)
                 and not has_breath_pause):
@@ -357,7 +362,7 @@ def InitProcessData():
             settings.output_folder_path,
             process_data.process_data_paths.audio_output_file_path,
             process_data.media_info
-        ) = download_from_youtube(settings.input_file_path, settings.output_folder_path, settings.cookiefile)
+        ) = download_from_youtube(settings.input_file_path, settings.output_folder_path, settings.cookiefile, download_video=False)
     else:
         # Audio File
         print(f"{ULTRASINGER_HEAD} {gold_highlighted('Full Automatic Mode')}")
@@ -383,11 +388,22 @@ def TranscribeAudio(process_data):
     # Hyphen
     # Todo: Is it really unnecessary?
     remove_unecessary_punctuations(process_data.transcribed_data)
+    
+    # DEBUG: Log hyphenation setting
+    print(f"[DEBUG] settings.hyphenation = {settings.hyphenation}")
+    print(f"[DEBUG] Tipo de settings.hyphenation: {type(settings.hyphenation)}")
+    
     if settings.hyphenation:
+        print("[DEBUG] Aplicando hifenização...")
         hyphen_words = hyphenate_each_word(process_data.media_info.language, process_data.transcribed_data)
 
         if hyphen_words is not None:
+            print(f"[DEBUG] Hifenização aplicada para {len(hyphen_words)} palavras")
             process_data.transcribed_data = add_hyphen_to_data(process_data.transcribed_data, hyphen_words)
+        else:
+            print("[DEBUG] hyphen_words é None, não aplicando hifenização")
+    else:
+        print("[DEBUG] Hifenização desabilitada, pulando...")
 
     process_data.transcribed_data = remove_silence_from_transcription_data(
         process_data.process_data_paths.processing_audio_path, process_data.transcribed_data
