@@ -129,7 +129,9 @@ class UltrastarScoreCalculator:
         end_diff = abs(expected_end - actual_end)
         duration_diff = abs(expected_duration - actual_duration)
         
-        # Normalize timing differences
+        # Normalize timing differences - avoid division by zero
+        if expected_duration <= 0:
+            return 0.0
         timing_score = max(0, 1 - ((start_diff + end_diff + duration_diff) / expected_duration))
         return timing_score
     
