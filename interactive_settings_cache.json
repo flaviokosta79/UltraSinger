@@ -1,13 +1,24 @@
 {
-  "whisper_model": "large-v2",
+  "whisper_model": "large-v3-turbo",
   "demucs_model": "htdemucs",
   "language": null,
   "whisper_batch_size": 16,
   "whisper_compute_type": null,
+  "crepe_model_capacity": "full",
+  "crepe_step_size": 10,
   "force_cpu": false,
-  "keep_cache": false,
+  "force_whisper_cpu": false,
+  "force_crepe_cpu": false,
+  "use_separated_vocal": true,
+  "use_pitch_detection": false,
+  "ignore_audio": false,
   "create_midi": false,
   "create_plot": false,
+  "create_sheet": false,
   "hyphenation": false,
-  "timestamp": 1759541535.095054
+  "create_karaoke": true,
+  "create_audio_chunks": false,
+  "keep_cache": false,
+  "keep_numbers": false,
+  "timestamp": 1759612141.9295092
 }

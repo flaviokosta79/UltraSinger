@@ -28,10 +28,13 @@ class Settings:
     interactive_mode = False
     user_ffmpeg_path = ""
 
+    # Job control flags
+    use_pitch_detection = True  # Controla se pitch detection (Crepe) será executado
+
     # Process data Paths
     input_file_path = ""
     output_folder_path = ""
-    
+
     language = None
     format_version = FormatVersion.V1_2_0
 
@@ -60,6 +63,7 @@ class Settings:
 
     # MuseScore
     musescore_path = None
+    create_sheet = False  # Flag to control sheet music generation
 
     # yt-dlp
     cookiefile = None

@@ -181,21 +181,44 @@ def run() -> tuple[str, Score, Score]:
         create_audio_chunks(process_data)
 
     # Pitch audio
-    process_data.pitched_data = pitch_audio(process_data.process_data_paths)
+    if settings.use_pitch_detection:
+        process_data.pitched_data = pitch_audio(process_data.process_data_paths)
+    else:
+        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('Skipping:')} {cyan_highlighted('Pitch detection disabled by user')}")
+        # Criar pitched_data vazio para evitar erros
+        from modules.Pitcher.pitched_data import PitchedData
+        process_data.pitched_data = PitchedData([], [], [])
 
     # Create Midi_Segments
-    if not settings.ignore_audio:
+    if not settings.ignore_audio and settings.use_pitch_detection:
         process_data.midi_segments = create_midi_segments_from_transcribed_data(process_data.transcribed_data,
                                                                                 process_data.pitched_data)
-    else:
+    elif settings.use_pitch_detection:
         process_data.midi_segments = create_repitched_midi_segments_from_ultrastar_txt(process_data.pitched_data,
                                                                                        process_data.parsed_file)
+    else:
+        # Sem pitch detection, criar segments básicos apenas com texto e timing
+        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('Info:')} {cyan_highlighted('Creating segments without pitch data')}")
+        from modules.Midi.MidiSegment import MidiSegment
+        # Criar MIDI segments com nota padrão C4 (60) para cada palavra transcrita
+        process_data.midi_segments = [
+            MidiSegment(
+                note="C4",  # Nota padrão quando pitch detection está desativado
+                start=data.start,
+                end=data.end,
+                word=data.word
+            )
+            for data in process_data.transcribed_data
+        ]
+        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('Info:')} {cyan_highlighted(f'Created {len(process_data.midi_segments)} basic segments from transcription')}")
 
     # Merge syllable segments
-    if not settings.ignore_audio:
+    if not settings.ignore_audio and len(process_data.midi_segments) > 0:
         process_data.midi_segments, process_data.transcribed_data = merge_syllable_segments(process_data.midi_segments,
                                                                                         process_data.transcribed_data,
                                                                                         process_data.media_info.bpm)
+    elif len(process_data.midi_segments) == 0:
+        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('Info:')} {cyan_highlighted('Skipping merge: No MIDI segments available (pitch detection disabled)')}")
 
     # Create plot
     if settings.create_plot:
@@ -210,9 +233,12 @@ def run() -> tuple[str, Score, Score]:
                          process_data.basename)
 
     # Sheet music
-    create_sheet(process_data.midi_segments, settings.output_folder_path,
-                 process_data.process_data_paths.cache_folder_path, settings.musescore_path, process_data.basename,
-                 process_data.media_info)
+    if settings.create_sheet:
+        create_sheet(process_data.midi_segments, settings.output_folder_path,
+                     process_data.process_data_paths.cache_folder_path, settings.musescore_path, process_data.basename,
+                     process_data.media_info)
+    else:
+        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('Info:')} {cyan_highlighted('Skipping sheet music creation: Disabled by user')}")
 
     # Cleanup
     if not settings.keep_cache:
@@ -230,7 +256,7 @@ def split_syllables_into_segments(
     # Só processa se hyphenation estiver habilitado
     if not settings.hyphenation:
         return transcribed_data
-        
+
     syllable_segment_size = get_sixteenth_note_second(real_bpm)
 
     segment_size_decimal_points = len(str(syllable_segment_size).split(".")[1])
@@ -346,17 +372,17 @@ def InitProcessData():
     if settings.rtx_5060ti_auto_optimize:
         print(f"{ULTRASINGER_HEAD} {gold_highlighted('Inicializando otimização RTX 5060TI...')}")
         rtx_5060ti_optimizer.initialize_gpu_optimization()
-        
+
         # Start performance monitoring if enabled
         if settings.rtx_5060ti_monitor_performance:
             gpu_performance_monitor.start_monitoring()
             print(f"{ULTRASINGER_HEAD} {gold_highlighted('Monitor de performance RTX 5060TI ativado')}")
-        
+
         # Initialize fallback system if enabled
         if settings.rtx_5060ti_fallback_enabled:
             gpu_fallback_system.initialize()
             print(f"{ULTRASINGER_HEAD} {gold_highlighted('Sistema de fallback CPU/GPU ativado')}")
-    
+
     settings.input_file_is_ultrastar_txt = settings.input_file_path.endswith(".txt")
     if settings.input_file_is_ultrastar_txt:
         # Parse Ultrastar txt
@@ -407,11 +433,11 @@ def TranscribeAudio(process_data):
     # Hyphen
     # Todo: Is it really unnecessary?
     remove_unecessary_punctuations(process_data.transcribed_data)
-    
+
     # DEBUG: Log hyphenation setting
     print(f"[DEBUG] settings.hyphenation = {settings.hyphenation}")
     print(f"[DEBUG] Tipo de settings.hyphenation: {type(settings.hyphenation)}")
-    
+
     if settings.hyphenation:
         print("[DEBUG] Aplicando hifenização...")
         hyphen_words = hyphenate_each_word(process_data.media_info.language, process_data.transcribed_data)
@@ -463,12 +489,18 @@ def CreateUltraStarTxt(process_data: ProcessData):
     # Calc Points
     simple_score = None
     accurate_score = None
-    if settings.calculate_score:
+    if settings.calculate_score and settings.use_pitch_detection:
         simple_score, accurate_score = calculate_score_points(process_data, ultrastar_file_output)
+    elif settings.calculate_score and not settings.use_pitch_detection:
+        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('Info:')} {cyan_highlighted('Skipping score calculation: No pitch data available')}")
 
     # Add calculated score to Ultrastar txt
     #Todo: Missing Karaoke
-    ultrastar_writer.add_score_to_ultrastar_txt(ultrastar_file_output, simple_score)
+    if simple_score is not None:
+        ultrastar_writer.add_score_to_ultrastar_txt(ultrastar_file_output, simple_score)
+    else:
+        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('Info:')} {cyan_highlighted('No score to add to UltraStar file')}")
+
     return accurate_score, simple_score, ultrastar_file_output
 
 
@@ -624,43 +656,43 @@ def main(argv: list[str]) -> None:
     check_requirements()
     if settings.interactive_mode:
         init_settings_interactive(settings)
-    
+
     # Initialize RTX 5060TI optimization after settings are configured
     if settings.rtx_5060ti_auto_optimize:
         print(f"{ULTRASINGER_HEAD} {gold_highlighted('Aplicando otimizações RTX 5060TI...')}")
         component_optimizer.apply_rtx_5060ti_optimizations()
-    
+
     run()
-    
+
     # Cleanup GPU resources
     if settings.rtx_5060ti_monitor_performance:
         gpu_performance_monitor.stop_monitoring()
         gpu_performance_monitor.print_performance_report()
-    
+
     if settings.rtx_5060ti_fallback_enabled:
         gpu_fallback_system.cleanup()
-    
+
     sys.exit()
 
 
 def check_requirements() -> None:
     if not settings.force_cpu:
         settings.tensorflow_device, settings.pytorch_device = check_gpu_support()
-        
+
         # Inicializar sistema de fallback se GPU não disponível
         if settings.tensorflow_device == "cpu" and settings.pytorch_device == "cpu":
             print(f"{ULTRASINGER_HEAD} {gold_highlighted('GPU não disponível - ativando sistema de fallback inteligente')}")
             try:
                 gpu_fallback_system.initialize()
                 gpu_fallback_system.start_health_monitoring()
-                
+
                 # Forçar fallback para todos os componentes
                 for component in ["whisper", "demucs", "crepe"]:
                     gpu_fallback_system.force_component_fallback(component, "no_gpu_detected")
-                    
+
             except Exception as e:
                 print(f"{ULTRASINGER_HEAD} {red_highlighted('Warning:')} Failed to initialize fallback system: {str(e)}")
-    
+
     print(f"{ULTRASINGER_HEAD} ----------------------")
 
     if not is_ffmpeg_available(settings.user_ffmpeg_path):
