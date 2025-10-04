@@ -15,10 +15,10 @@
   "create_midi": false,
   "create_plot": false,
   "create_sheet": false,
-  "hyphenation": false,
+  "hyphenation": true,
   "create_karaoke": true,
   "create_audio_chunks": false,
   "keep_cache": false,
   "keep_numbers": false,
-  "timestamp": 1759612141.9295092
+  "timestamp": 1759613772.8738127
 }

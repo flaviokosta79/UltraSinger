@@ -37,11 +37,42 @@ This will help me a lot to keep this project alive and improve it.
 <a href="https://patreon.com/Rakuri"><img src="https://raw.githubusercontent.com/rakuri255/UltraSinger/main/assets/patreon.png" alt="Become a Patron" style="height: 60px !important;width: 217px !important;"/> </a>
 <a href="https://github.com/sponsors/rakuri255"><img src="https://raw.githubusercontent.com/rakuri255/UltraSinger/main/assets/mona-heart-featured.webp" alt="GitHub Sponsor" style="height: 60px !important;width: auto;"/> </a>
 
+## 🌐 Web Frontend
+
+UltraSinger now includes a modern web interface built with React! The frontend provides an intuitive way to process your audio files with a beautiful, user-friendly interface.
+
+### Features
+- 🎨 **Modern Design**: Dark theme with glassmorphism effects and smooth animations
+- 📱 **Fully Responsive**: Works seamlessly on desktop, tablet, and mobile devices
+- 🎵 **Drag & Drop Upload**: Easy file upload with drag-and-drop support
+- 🔗 **YouTube Integration**: Direct YouTube URL processing
+- ⚙️ **Job Configuration**: Visual interface to select and configure processing jobs
+- 🚀 **Real-time Progress**: Track your audio processing in real-time (coming soon)
+
+### Quick Start
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+The frontend will be available at `http://localhost:3000`
+
+For detailed information about the frontend, see the [Frontend Guide](frontend/GUIA_FRONTEND.md) or [Frontend README](frontend/README.md).
+
+> **Note**: The backend API is currently under development. The frontend is ready but needs the backend to be fully functional.
+
 ## Table of Contents
 
 - [UltraSinger](#ultrasinger)
   - [❤️ Support](#️-support)
   - [Table of Contents](#table-of-contents)
+  - [🌐 Web Frontend](#-web-frontend)
   - [💻 How to use this source code](#-how-to-use-this-source-code)
     - [Installation](#installation)
     - [Run](#run)

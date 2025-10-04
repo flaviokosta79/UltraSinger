@@ -67,3 +67,21 @@ interactive_settings_cache.json
 *.mkv
 *.flac
 *.ogg
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# Backend (quando criar)
+backend/__pycache__/
+backend/*.pyc
+backend/uploads/
+backend/.env
