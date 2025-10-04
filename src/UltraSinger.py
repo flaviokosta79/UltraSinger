@@ -66,6 +66,10 @@ from modules.musicbrainz_client import search_musicbrainz
 from modules.sheet import create_sheet
 from modules.ProcessData import ProcessData, ProcessDataPaths, MediaInfo
 from modules.DeviceDetection.device_detection import check_gpu_support
+from modules.DeviceDetection.rtx_5060ti_optimizer import rtx_5060ti_optimizer
+from modules.DeviceDetection.gpu_performance_monitor import gpu_performance_monitor
+from modules.DeviceDetection.gpu_fallback_system import gpu_fallback_system
+from modules.DeviceDetection.component_optimizer import component_optimizer
 from modules.Image.image_helper import save_image
 from modules.ffmpeg_helper import is_ffmpeg_available, get_ffmpeg_and_ffprobe_paths
 
@@ -338,6 +342,21 @@ def create_audio_chunks(process_data):
 
 
 def InitProcessData():
+    # Initialize RTX 5060TI GPU optimization if enabled
+    if settings.rtx_5060ti_auto_optimize:
+        print(f"{ULTRASINGER_HEAD} {gold_highlighted('Inicializando otimização RTX 5060TI...')}")
+        rtx_5060ti_optimizer.initialize_gpu_optimization()
+        
+        # Start performance monitoring if enabled
+        if settings.rtx_5060ti_monitor_performance:
+            gpu_performance_monitor.start_monitoring()
+            print(f"{ULTRASINGER_HEAD} {gold_highlighted('Monitor de performance RTX 5060TI ativado')}")
+        
+        # Initialize fallback system if enabled
+        if settings.rtx_5060ti_fallback_enabled:
+            gpu_fallback_system.initialize()
+            print(f"{ULTRASINGER_HEAD} {gold_highlighted('Sistema de fallback CPU/GPU ativado')}")
+    
     settings.input_file_is_ultrastar_txt = settings.input_file_path.endswith(".txt")
     if settings.input_file_is_ultrastar_txt:
         # Parse Ultrastar txt
@@ -605,13 +624,43 @@ def main(argv: list[str]) -> None:
     check_requirements()
     if settings.interactive_mode:
         init_settings_interactive(settings)
+    
+    # Initialize RTX 5060TI optimization after settings are configured
+    if settings.rtx_5060ti_auto_optimize:
+        print(f"{ULTRASINGER_HEAD} {gold_highlighted('Aplicando otimizações RTX 5060TI...')}")
+        component_optimizer.apply_rtx_5060ti_optimizations()
+    
     run()
+    
+    # Cleanup GPU resources
+    if settings.rtx_5060ti_monitor_performance:
+        gpu_performance_monitor.stop_monitoring()
+        gpu_performance_monitor.print_performance_report()
+    
+    if settings.rtx_5060ti_fallback_enabled:
+        gpu_fallback_system.cleanup()
+    
     sys.exit()
 
 
 def check_requirements() -> None:
     if not settings.force_cpu:
         settings.tensorflow_device, settings.pytorch_device = check_gpu_support()
+        
+        # Inicializar sistema de fallback se GPU não disponível
+        if settings.tensorflow_device == "cpu" and settings.pytorch_device == "cpu":
+            print(f"{ULTRASINGER_HEAD} {gold_highlighted('GPU não disponível - ativando sistema de fallback inteligente')}")
+            try:
+                gpu_fallback_system.initialize()
+                gpu_fallback_system.start_health_monitoring()
+                
+                # Forçar fallback para todos os componentes
+                for component in ["whisper", "demucs", "crepe"]:
+                    gpu_fallback_system.force_component_fallback(component, "no_gpu_detected")
+                    
+            except Exception as e:
+                print(f"{ULTRASINGER_HEAD} {red_highlighted('Warning:')} Failed to initialize fallback system: {str(e)}")
+    
     print(f"{ULTRASINGER_HEAD} ----------------------")
 
     if not is_ffmpeg_available(settings.user_ffmpeg_path):

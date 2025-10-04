@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional, Dict, Any
 
 from dataclasses_json import dataclass_json
 
@@ -71,3 +72,12 @@ class Settings:
     skip_cache_transcription = False
     skip_cache_pitch_detection = False
     calculate_score = True
+
+    # RTX 5060TI GPU Optimization Settings
+    rtx_5060ti_detected = False
+    rtx_5060ti_optimization_mode = "balanced"  # conservative|balanced|aggressive
+    rtx_5060ti_auto_optimize = True
+    rtx_5060ti_monitor_performance = True
+    rtx_5060ti_fallback_enabled = True
+    rtx_5060ti_vram_limit_gb = 14.0  # Leave 2GB for system
+    rtx_5060ti_config: Optional[Dict[str, Any]] = None

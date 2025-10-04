@@ -1,0 +1,18 @@
+{
+  "optimization_mode": "balanced",
+  "vram_limit_gb": 14.0,
+  "monitor_performance": true,
+  "fallback_enabled": true,
+  "whisper_config": {
+    "batch_size": 12,
+    "compute_type": "float16"
+  },
+  "demucs_config": {
+    "segment": 15,
+    "overlap": 0.2
+  },
+  "crepe_config": {
+    "model_capacity": "large",
+    "step_size": 15
+  }
+}

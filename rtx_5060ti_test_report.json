@@ -1,0 +1,44 @@
+{
+  "gpu_detection": true,
+  "optimization": true,
+  "monitoring": false,
+  "fallback": {
+    "whisper": {
+      "gpu_fallback": {
+        "device": "cpu",
+        "compute_type": "int8"
+      },
+      "cpu_config": {
+        "device": "cpu",
+        "compute_type": "int8",
+        "batch_size": 4
+      }
+    },
+    "demucs": {
+      "gpu_fallback": {
+        "device": "cpu",
+        "chunk_size": 65536
+      },
+      "cpu_config": {
+        "device": "cpu",
+        "chunk_size": 32768,
+        "jobs": 24
+      }
+    },
+    "crepe": {
+      "gpu_fallback": {
+        "device": "cpu",
+        "batch_size": 64
+      },
+      "cpu_config": {
+        "device": "cpu",
+        "batch_size": 32,
+        "model_capacity": "large"
+      }
+    }
+  },
+  "interface": true,
+  "settings_integration": true,
+  "performance_metrics": {},
+  "errors": []
+}

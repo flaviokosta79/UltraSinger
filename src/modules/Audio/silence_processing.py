@@ -96,11 +96,14 @@ def remove_silence(silence_parts_list: list[tuple[float, float]], transcribed_da
                 elif (split_word == "~ " or split_word == " ") and not data.is_word_end:
                     # Verificar se existe dados e se a palavra não está vazia
                     if (new_transcribed_data and 
+                        hasattr(new_transcribed_data[-1], 'word') and
                         new_transcribed_data[-1].word and 
                         len(new_transcribed_data[-1].word) > 0 and 
                         new_transcribed_data[-1].word[-1] != " "):
                         new_transcribed_data[-1].word += " "
-                    new_transcribed_data[-1].is_word_end = True
+                    # Verificar se o último elemento existe antes de modificar
+                    if new_transcribed_data:
+                        new_transcribed_data[-1].is_word_end = True
 
                 continue
 
