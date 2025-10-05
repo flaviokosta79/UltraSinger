@@ -225,15 +225,31 @@ class HotwordExtractor:
 
 
 class LyricsCorrector:
-    """Corrige transcrição WhisperX usando letra LRCLib como referência"""
+    """Corretor de letras usando LRCLib como referência"""
 
-    def __init__(self, similarity_threshold: float = 0.8):
+    # Modos de operação
+    MODE_CORRECTION = "correction"  # Correção palavra por palavra (antigo)
+    MODE_SYNC = "sync"              # Sincronização pura LRCLib + timestamps
+    MODE_HYBRID = "hybrid"          # Híbrido: usa LRCLib mas mantém estrutura WhisperX
+
+    def __init__(
+        self, 
+        similarity_threshold: float = 0.8, 
+        mode: str = MODE_CORRECTION  # Modo padrão: correção (mais conservador)
+    ):
         """
         Args:
             similarity_threshold: Limiar de similaridade (0-1)
-                                  Acima deste valor, considera correto
+            mode: Modo de operação:
+                  - "correction": Correção palavra por palavra (TESTADO ✅)
+                  - "sync": Sincronização pura LRCLib + timestamps (EXPERIMENTAL)
+                  - "hybrid": Híbrido - usa LRCLib mantendo estrutura WhisperX (NOVO)
         """
         self.similarity_threshold = similarity_threshold
+        self.mode = mode
+        
+        # Manter compatibilidade com código antigo
+        self.use_sync_mode = (mode == self.MODE_SYNC)
 
     def correct(
         self,
@@ -241,7 +257,7 @@ class LyricsCorrector:
         lrclib_lyrics: str
     ) -> Tuple[List[Dict], int]:
         """
-        Corrige segmentos do WhisperX usando letra LRCLib
+        Corrige/sincroniza segmentos do WhisperX usando letra LRCLib
 
         Args:
             whisperx_segments: Segmentos transcritos pelo WhisperX
@@ -264,23 +280,203 @@ class LyricsCorrector:
 
         print(f"📊 Similaridade WhisperX vs LRCLib: {similarity:.2%}")
 
-        # SEMPRE aplicar correções, mesmo com alta similaridade
-        # Motivo: nomes próprios, acentos e pequenas diferenças são importantes
-        if similarity >= 0.95:
-            print("ℹ️ Transcrição muito precisa, mas verificando nomes próprios...")
+        # Selecionar estratégia baseado no modo
+        if self.mode == self.MODE_SYNC:
+            print("🔄 Modo SYNC: Letra 100% LRCLib + timestamps WhisperX")
+            return self._sync_lrclib_with_whisperx(whisperx_segments, lrclib_clean)
         
-        # Aplicar correções palavra por palavra
-        corrected, num_corrections = self._apply_word_corrections(
-            whisperx_segments,
-            lrclib_clean
+        elif self.mode == self.MODE_HYBRID:
+            print("🔀 Modo HYBRID: LRCLib com estrutura WhisperX")
+            return self._hybrid_sync(whisperx_segments, lrclib_clean)
+        
+        else:  # MODE_CORRECTION (padrão)
+            print("✏️ Modo CORRECTION: Correção palavra por palavra")
+            
+            if similarity >= 0.95:
+                print("ℹ️ Transcrição muito precisa, mas verificando nomes próprios...")
+
+            corrected, num_corrections = self._apply_word_corrections(
+                whisperx_segments,
+                lrclib_clean
+            )
+
+            if num_corrections > 0:
+                print(f"✅ {num_corrections} correções aplicadas")
+            else:
+                print("ℹ️ Nenhuma correção necessária")
+
+            return corrected, num_corrections
+
+    def _sync_lrclib_with_whisperx(
+        self,
+        whisperx_segments: List[Dict],
+        lrclib_lyrics: str
+    ) -> Tuple[List[Dict], int]:
+        """
+        Sincroniza letra LRCLib com timestamps WhisperX
+
+        Estratégia:
+        1. Usa 100% da letra do LRCLib (palavras corretas)
+        2. Alinha com timestamps do WhisperX (precisão de timing)
+        3. Resultado: Letra perfeita + timing preciso
+
+        Args:
+            whisperx_segments: Segmentos com timestamps do WhisperX
+            lrclib_lyrics: Letra correta do LRCLib
+
+        Returns:
+            Tupla (segmentos_sincronizados, numero_de_palavras_sincronizadas)
+        """
+
+        # Extrair palavras de ambas as fontes
+        lrclib_words = lrclib_lyrics.split()
+        whisperx_words = [seg['text'].strip() for seg in whisperx_segments]
+
+        print(f"🔍 LRCLib: {len(lrclib_words)} palavras | WhisperX: {len(whisperx_words)} palavras")
+
+        # Alinhar palavras usando SequenceMatcher
+        matcher = SequenceMatcher(
+            None,
+            [w.lower() for w in whisperx_words],
+            [w.lower() for w in lrclib_words]
+        )
+
+        # Criar mapa de alinhamento: índice_whisperx -> índice_lrclib
+        alignment = {}
+
+        for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+            if tag == 'equal' or tag == 'replace':
+                # Alinhar palavras correspondentes
+                for offset in range(min(i2 - i1, j2 - j1)):
+                    alignment[i1 + offset] = j1 + offset
+
+        # Criar segmentos sincronizados
+        synced_segments = []
+        used_lrclib_indices = set()
+
+        for idx, seg in enumerate(whisperx_segments):
+            if idx in alignment:
+                lrclib_idx = alignment[idx]
+                synced_segments.append({
+                    'text': lrclib_words[lrclib_idx],  # ✅ Palavra do LRCLib
+                    'start': seg['start'],  # ✅ Timestamp do WhisperX
+                    'end': seg['end']
+                })
+                used_lrclib_indices.add(lrclib_idx)
+
+        # Adicionar palavras do LRCLib que não foram alinhadas
+        # (usa timestamps estimados)
+        for lrclib_idx, word in enumerate(lrclib_words):
+            if lrclib_idx not in used_lrclib_indices:
+                # Estimar timestamp baseado em posição relativa
+                if synced_segments:
+                    last_seg = synced_segments[-1]
+                    estimated_start = last_seg['end']
+                    estimated_end = estimated_start + 0.5  # 500ms default
+                else:
+                    estimated_start = 0
+                    estimated_end = 0.5
+
+                synced_segments.append({
+                    'text': word,
+                    'start': estimated_start,
+                    'end': estimated_end
+                })
+
+        num_synced = len(synced_segments)
+        print(f"✅ {num_synced} palavras sincronizadas (letra LRCLib + timing WhisperX)")
+
+        return synced_segments, num_synced
+
+    def _hybrid_sync(
+        self,
+        whisperx_segments: List[Dict],
+        lrclib_lyrics: str
+    ) -> Tuple[List[Dict], int]:
+        """
+        Modo híbrido: Usa letra LRCLib mas mantém estrutura de segmentos do WhisperX
+        
+        Estratégia:
+        1. Mantém número de segmentos do WhisperX (estrutura temporal)
+        2. Substitui texto de cada segmento por palavras corretas do LRCLib
+        3. Alinha usando SequenceMatcher para correções inteligentes
+        4. Melhor para manter timing preciso enquanto corrige palavras
+        
+        Args:
+            whisperx_segments: Segmentos com timestamps do WhisperX
+            lrclib_lyrics: Letra correta do LRCLib
+            
+        Returns:
+            Tupla (segmentos_corrigidos, numero_de_correcoes)
+        """
+        
+        # Extrair palavras de ambas as fontes
+        lrclib_words = lrclib_lyrics.split()
+        whisperx_words = [seg['text'].strip() for seg in whisperx_segments]
+        
+        print(f"🔍 WhisperX: {len(whisperx_words)} palavras | LRCLib: {len(lrclib_words)} palavras")
+        
+        # Alinhar palavras usando SequenceMatcher
+        matcher = SequenceMatcher(
+            None,
+            [w.lower() for w in whisperx_words],
+            [w.lower() for w in lrclib_words]
         )
         
-        if num_corrections > 0:
-            print(f"✏️ {num_corrections} correções aplicadas usando LRCLib")
-        else:
-            print("ℹ️ Nenhuma correção necessária")
+        # Construir mapa de correções: índice_whisperx -> palavra_lrclib
+        corrections_map = {}
+        corrections_count = 0
         
-        return corrected, num_corrections
+        for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+            if tag == 'equal':
+                # Palavras iguais - manter
+                for offset in range(min(i2 - i1, j2 - j1)):
+                    corrections_map[i1 + offset] = lrclib_words[j1 + offset]
+                    
+            elif tag == 'replace':
+                # Palavras diferentes - corrigir
+                trans_slice = whisperx_words[i1:i2]
+                ref_slice = lrclib_words[j1:j2]
+                
+                # Caso 1: Mesma quantidade - substituição 1:1
+                if len(trans_slice) == len(ref_slice):
+                    for offset in range(len(trans_slice)):
+                        corrections_map[i1 + offset] = ref_slice[offset]
+                        if trans_slice[offset].lower() != ref_slice[offset].lower():
+                            corrections_count += 1
+                
+                # Caso 2: Mais palavras WhisperX - consolidar
+                elif len(trans_slice) > len(ref_slice) and ref_slice:
+                    # Primeira palavra recebe todas as correções concatenadas
+                    corrections_map[i1] = " ".join(ref_slice)
+                    # Demais marcadas para remoção
+                    for idx in range(1, len(trans_slice)):
+                        corrections_map[i1 + idx] = ""
+                    corrections_count += 1
+                
+                # Caso 3: Menos palavras WhisperX - expandir
+                elif len(trans_slice) < len(ref_slice) and trans_slice:
+                    # Expandir primeira palavra
+                    corrections_map[i1] = " ".join(ref_slice)
+                    corrections_count += 1
+        
+        # Aplicar correções mantendo timestamps do WhisperX
+        corrected_segments = []
+        
+        for idx, seg in enumerate(whisperx_segments):
+            if idx in corrections_map and corrections_map[idx]:  # Tem correção e não é remoção
+                corrected_segments.append({
+                    'text': corrections_map[idx],
+                    'start': seg['start'],
+                    'end': seg['end']
+                })
+            elif idx not in corrections_map:
+                # Sem correção - manter original
+                corrected_segments.append(seg.copy())
+        
+        print(f"✅ {corrections_count} correções aplicadas (modo híbrido)")
+        
+        return corrected_segments, corrections_count
 
     def _clean_lyrics(self, lyrics: str) -> str:
         """Remove timestamps e normaliza texto"""
@@ -301,62 +497,62 @@ class LyricsCorrector:
     ) -> Tuple[List[Dict], int]:
         """
         Aplica correções palavra por palavra usando alinhamento inteligente
-        
+
         Estratégia:
         1. Extrai todas as palavras da transcrição e referência
         2. Alinha usando SequenceMatcher (lida com inserções/deleções/substituições)
         3. Aplica correções mantendo timestamps dos segmentos originais
         4. Lida com nomes compostos (ex: "janela e monê" -> "Janelle Monáe")
         """
-        
+
         # Extrair todas as palavras transcritas
         transcribed_words = []
         for seg in segments:
             transcribed_words.extend(seg['text'].split())
-        
+
         # Extrair palavras de referência
         reference_words = reference_lyrics.split()
-        
+
         # Alinhar palavras usando SequenceMatcher
         matcher = SequenceMatcher(
             None,
             [w.lower() for w in transcribed_words],
             [w.lower() for w in reference_words]
         )
-        
+
         # Construir mapa de correções: índice_transcrito -> palavra_correta
         word_corrections = {}
         corrections_made = 0
-        
+
         for tag, i1, i2, j1, j2 in matcher.get_opcodes():
             if tag == 'replace':
                 # Palavras diferentes - aplicar correção
                 # i1:i2 são índices em transcribed_words
                 # j1:j2 são índices em reference_words
-                
+
                 trans_slice = transcribed_words[i1:i2]
                 ref_slice = reference_words[j1:j2]
-                
+
                 # Caso 1: Mesma quantidade de palavras - substituição 1:1
                 if len(trans_slice) == len(ref_slice):
                     for idx, (trans_w, ref_w) in enumerate(zip(trans_slice, ref_slice)):
                         if trans_w.lower() != ref_w.lower():
                             word_corrections[i1 + idx] = ref_w
                             corrections_made += 1
-                
+
                 # Caso 2: Mais palavras transcritas (3) que referência (2)
                 # Ex: ["janela", "e", "monê"] -> ["Janelle", "Monáe"]
                 elif len(trans_slice) > len(ref_slice):
                     # Marcar primeiro conjunto de palavras para correção composta
                     combined_ref = " ".join(ref_slice)
                     word_corrections[i1] = combined_ref
-                    
+
                     # Marcar palavras subsequentes para remoção
                     for idx in range(1, len(trans_slice)):
                         word_corrections[i1 + idx] = ""  # Remove
-                    
+
                     corrections_made += 1
-                
+
                 # Caso 3: Menos palavras transcritas que referência
                 # Ex: ["Janelle"] -> ["Janelle", "Monáe"]
                 elif len(trans_slice) < len(ref_slice):
@@ -364,27 +560,27 @@ class LyricsCorrector:
                     combined_ref = " ".join(ref_slice)
                     word_corrections[i1] = combined_ref
                     corrections_made += 1
-            
+
             elif tag == 'delete':
                 # Palavras extras na transcrição - remover
                 for idx in range(i1, i2):
                     word_corrections[idx] = ""
                     corrections_made += 1
-            
+
             elif tag == 'insert':
                 # Palavras faltando na transcrição - adicionar após posição anterior
                 # (mais complexo, skip por enquanto)
                 pass
-        
+
         # Aplicar correções aos segmentos mantendo timestamps
         corrected_segments = []
         word_idx = 0
-        
+
         for segment in segments:
             segment_copy = segment.copy()
             words = segment['text'].split()
             corrected_words = []
-            
+
             for word in words:
                 if word_idx in word_corrections:
                     corrected = word_corrections[word_idx]
@@ -393,10 +589,10 @@ class LyricsCorrector:
                 else:
                     corrected_words.append(word)
                 word_idx += 1
-            
+
             segment_copy['text'] = " ".join(corrected_words)
             corrected_segments.append(segment_copy)
-        
+
         return corrected_segments, corrections_made
 
 
