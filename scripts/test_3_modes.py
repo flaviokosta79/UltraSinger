@@ -67,21 +67,21 @@ for nome, modo, descricao in modos:
     print(f"TESTANDO MODO: {nome}")
     print(f"Descrição: {descricao}")
     print("=" * 80)
-    
+
     corrector = LyricsCorrector(mode=modo)
     corrected, num_corrections = corrector.correct(test_segments.copy(), reference_lyrics)
-    
+
     resultados[nome] = {
         'segments': corrected,
         'corrections': num_corrections,
         'text': " ".join([s['text'] for s in corrected])
     }
-    
+
     print(f"\n📋 RESULTADO ({num_corrections} correções):")
     print("-" * 80)
     for i, seg in enumerate(corrected[:15], 1):  # Mostrar primeiros 15
         print(f"{i:2d}. [{seg['start']:5.1f}s - {seg['end']:5.1f}s] {seg['text']}")
-    
+
     if len(corrected) > 15:
         print(f"    ... (+{len(corrected) - 15} palavras)")
 
@@ -96,14 +96,14 @@ print("-" * 80)
 for nome in resultados:
     texto = resultados[nome]['text']
     num_corr = resultados[nome]['corrections']
-    
+
     if "Janelle" in texto and "Monáe" in texto:
         status = "✅ SUCESSO"
     elif "Janelle" in texto:
         status = "⚠️ PARCIAL (só 'Janelle')"
     else:
         status = "❌ FALHOU"
-    
+
     print(f"{nome:12s} | {status:20s} | {num_corr:3d} correções | {len(resultados[nome]['segments']):3d} segmentos")
 
 # 5. Recomendação
@@ -117,18 +117,18 @@ melhor_score = -1
 for nome in resultados:
     texto = resultados[nome]['text']
     score = 0
-    
+
     # Pontos por encontrar Janelle Monáe
     if "Janelle" in texto:
         score += 10
     if "Monáe" in texto:
         score += 10
-    
+
     # Pontos por manter estrutura (número razoável de segmentos)
     num_segs = len(resultados[nome]['segments'])
     if 10 <= num_segs <= 20:
         score += 5
-    
+
     if score > melhor_score:
         melhor_score = score
         melhor_modo = nome

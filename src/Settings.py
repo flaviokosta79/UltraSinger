@@ -87,7 +87,7 @@ class Settings:
     rtx_5060ti_config: Optional[Dict[str, Any]] = None
 
     # LRCLib Integration Settings
-    use_lrclib = False  # Enable LRCLib API for lyrics correction
+    use_lrclib = True  # Enable LRCLib API for lyrics correction (habilitado por padrão)
     lrclib_artist = None  # Artist name for LRCLib search
     lrclib_track = None  # Track name for LRCLib search
     lrclib_album = None  # Album name for LRCLib search (optional)

@@ -14,33 +14,35 @@ from modules.os_helper import sanitize_filename, get_unused_song_output_dir
 from modules import os_helper
 from modules.ProcessData import MediaInfo
 from modules.Audio.bpm import get_bpm_from_file
-from modules.console_colors import ULTRASINGER_HEAD, green_highlighted, red_highlighted, yellow_highlighted, blue_highlighted
+from modules.console_colors import ULTRASINGER_HEAD, green_highlighted, red_highlighted, yellow_highlighted, blue_highlighted, cyan_highlighted, bright_green_highlighted
 from modules.Image.image_helper import save_image
 from modules.musicbrainz_client import search_musicbrainz
+from modules.MetadataValidator import MetadataValidator, create_lrclib_source, create_musicbrainz_source
+from modules.LRCLib.lrclib_integration import LRCLibAPI
 
 
 class YouTubeDownloader:
     """Enhanced YouTube downloader with comprehensive support"""
-    
+
     def __init__(self, cache_folder: Optional[str] = None):
         """Initialize YouTube downloader with cache support"""
         self.cache_folder = cache_folder or os.path.join(os.getcwd(), "cache", "youtube")
         self.validation_errors = []
         self._ensure_cache_folder()
-    
+
     def _ensure_cache_folder(self):
         """Ensure cache folder exists"""
         if not os.path.exists(self.cache_folder):
             os.makedirs(self.cache_folder, exist_ok=True)
-    
+
     def validate_youtube_url(self, url: str) -> bool:
         """Validate YouTube URL format"""
         self.validation_errors.clear()
-        
+
         if not url:
             self.validation_errors.append("URL não pode estar vazia")
             return False
-        
+
         # YouTube URL patterns
         youtube_patterns = [
             r'(?:https?://)?(?:www\.)?youtube\.com/watch\?v=([a-zA-Z0-9_-]+)',
@@ -48,33 +50,33 @@ class YouTubeDownloader:
             r'(?:https?://)?(?:www\.)?youtube\.com/embed/([a-zA-Z0-9_-]+)',
             r'(?:https?://)?(?:www\.)?youtube\.com/v/([a-zA-Z0-9_-]+)'
         ]
-        
+
         for pattern in youtube_patterns:
             if re.match(pattern, url):
                 return True
-        
+
         self.validation_errors.append("URL do YouTube inválida")
         return False
-    
+
     def get_validation_errors(self) -> List[str]:
         """Get validation errors"""
         return self.validation_errors.copy()
-    
+
     def extract_video_info(self, url: str, cookiefile: Optional[str] = None) -> Dict[str, Any]:
         """Extract comprehensive video information"""
         if not self.validate_youtube_url(url):
             raise ValueError(f"URL inválida: {', '.join(self.validation_errors)}")
-        
+
         ydl_opts = {
             "cookiefile": cookiefile,
             "quiet": True,
             "no_warnings": True,
         }
-        
+
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
-                
+
                 # Extract comprehensive information
                 video_info = {
                     "id": info.get("id", ""),
@@ -95,39 +97,39 @@ class YouTubeDownloader:
                     "album": info.get("album", ""),
                     "release_year": info.get("release_year", ""),
                 }
-                
+
                 return video_info
-                
+
         except Exception as e:
             print(f"{red_highlighted(f'Erro ao extrair informações do vídeo: {str(e)}')}")
             raise
-    
+
     def parse_artist_title(self, video_info: Dict[str, Any]) -> Tuple[str, str]:
         """Parse artist and title from video information"""
         # Try explicit artist/track fields first
         if video_info.get("artist") and video_info.get("track"):
             return video_info["artist"].strip(), video_info["track"].strip()
-        
+
         title = video_info.get("title", "")
         channel = video_info.get("channel", "")
-        
+
         # Common separators for artist - title format
         separators = [" - ", " – ", " — ", " | ", " / "]
-        
+
         for separator in separators:
             if separator in title:
                 parts = title.split(separator, 1)
                 if len(parts) == 2:
                     return parts[0].strip(), parts[1].strip()
-        
+
         # Fallback to channel and title
         return channel.strip(), title.strip()
-    
+
     def save_download_metadata(self, video_info: Dict[str, Any], download_path: str):
         """Save download metadata to cache"""
         try:
             metadata_file = os.path.join(self.cache_folder, "download_history.json")
-            
+
             # Load existing metadata
             metadata_list = []
             if os.path.exists(metadata_file):
@@ -136,7 +138,7 @@ class YouTubeDownloader:
                         metadata_list = json.load(f)
                 except:
                     metadata_list = []
-            
+
             # Add new metadata
             new_metadata = {
                 "timestamp": datetime.now().isoformat(),
@@ -147,17 +149,17 @@ class YouTubeDownloader:
                 "download_path": download_path,
                 "url": f"https://youtube.com/watch?v={video_info.get('id', '')}"
             }
-            
+
             metadata_list.append(new_metadata)
-            
+
             # Keep only last 50 downloads
             if len(metadata_list) > 50:
                 metadata_list = metadata_list[-50:]
-            
+
             # Save metadata
             with open(metadata_file, 'w', encoding='utf-8') as f:
                 json.dump(metadata_list, f, indent=2, ensure_ascii=False)
-                
+
         except Exception as e:
             print(f"{yellow_highlighted(f'Aviso: Não foi possível salvar metadados: {str(e)}')}")
 
@@ -190,7 +192,7 @@ def __download_youtube_audio(url: str, clear_filename: str, output_path: str, co
     """Download audio from YouTube with enhanced options"""
 
     print(f"{ULTRASINGER_HEAD} {blue_highlighted('Baixando áudio...')}")
-    
+
     # Quality options
     format_selector = {
         "best": "bestaudio/best",
@@ -198,13 +200,13 @@ def __download_youtube_audio(url: str, clear_filename: str, output_path: str, co
         "medium": "bestaudio[abr>=96]/best[abr>=96]",
         "low": "bestaudio[abr>=64]/best[abr>=64]"
     }.get(quality, "bestaudio/best")
-    
+
     ydl_opts = {
         "format": format_selector,
         "outtmpl": os.path.join(output_path, clear_filename),
         "postprocessors": [
             {
-                "key": "FFmpegExtractAudio", 
+                "key": "FFmpegExtractAudio",
                 "preferredcodec": "mp3",
                 "preferredquality": "192"
             }
@@ -253,7 +255,7 @@ def __download_youtube_video(url: str, clear_filename: str, output_path: str, co
     """Download video from YouTube with enhanced options"""
 
     print(f"{ULTRASINGER_HEAD} {blue_highlighted('Baixando vídeo...')}")
-    
+
     # Quality options for video
     format_selector = {
         "best": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/mp4",
@@ -261,7 +263,7 @@ def __download_youtube_video(url: str, clear_filename: str, output_path: str, co
         "medium": "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]",
         "low": "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]"
     }.get(quality, "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/mp4")
-    
+
     ydl_opts = {
         "format": format_selector,
         "outtmpl": os.path.join(output_path, clear_filename + ".%(ext)s"),
@@ -275,7 +277,7 @@ def __download_youtube_video(url: str, clear_filename: str, output_path: str, co
 
 def __start_download(ydl_opts, url: str) -> None:
     """Start the download with enhanced error handling"""
-    
+
     # Add progress hook
     def progress_hook(d):
         if d['status'] == 'downloading':
@@ -289,10 +291,10 @@ def __start_download(ydl_opts, url: str) -> None:
                 print(f"\r{blue_highlighted(progress_text)}", end='', flush=True)
         elif d['status'] == 'finished':
             print(f"\n{green_highlighted('Download concluído!')}")
-    
+
     ydl_opts['progress_hooks'] = [progress_hook]
     ydl_opts['no_warnings'] = True
-    
+
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
@@ -308,38 +310,110 @@ def __start_download(ydl_opts, url: str) -> None:
             raise Exception(f"Falha no download: {error_msg}")
 
 
-def download_from_youtube(input_url: str, output_folder_path: str, cookiefile: str = None, 
-                         audio_quality: str = "best", video_quality: str = "best", 
+def download_from_youtube(input_url: str, output_folder_path: str, cookiefile: str = None,
+                         audio_quality: str = "best", video_quality: str = "best",
                          download_video: bool = True, download_thumbnail: bool = True) -> tuple[str, str, str, MediaInfo]:
     """Enhanced YouTube download with comprehensive options"""
-    
+
     print(f"{ULTRASINGER_HEAD} {green_highlighted('Iniciando download do YouTube...')}")
-    
+
     # Initialize enhanced downloader
     downloader = YouTubeDownloader()
-    
+
     try:
         # Extract video information
         video_info = downloader.extract_video_info(input_url, cookiefile)
         (artist, title) = downloader.parse_artist_title(video_info)
-        
+
         print(f"{blue_highlighted(f'Artista: {artist}')}")
         print(f"{blue_highlighted(f'Título: {title}')}")
         duration_text = f"Duração: {video_info.get('duration', 0)} segundos"
         print(f"{blue_highlighted(duration_text)}")
 
-        # Get additional data for song
-        song_info = search_musicbrainz(title, artist)
+        # ==============================================================
+        # VALIDAÇÃO CRUZADA DE METADADOS (LRCLib + Musicbrainz)
+        # ==============================================================
+        print()
+        print(f"{cyan_highlighted('🔍 Validando metadados com múltiplas fontes...')}")
 
-        basename_without_ext = sanitize_filename(f"{song_info.artist} - {song_info.title}")
+        # Preservar dados originais do YouTube
+        youtube_artist = artist
+        youtube_title = title
+
+        # Limpar título para busca (remover sufixos do YouTube)
+        clean_title = title
+        youtube_suffixes = [
+            'official video', 'official music video', 'official audio',
+            'lyric video', 'lyrics', 'vevo presents', 'live', 'acoustic',
+            'remix', 'remaster', 'hd', '4k', 'explicit', 'visualizer'
+        ]
+        for suffix in youtube_suffixes:
+            # Remover entre parênteses ou colchetes
+            clean_title = re.sub(rf'\s*\({suffix}\)', '', clean_title, flags=re.IGNORECASE)
+            clean_title = re.sub(rf'\s*\[{suffix}\]', '', clean_title, flags=re.IGNORECASE)
+        clean_title = clean_title.strip()
+
+        # Buscar no LRCLib com título limpo
+        lrclib_api = LRCLibAPI()
+        lrclib_lyrics = lrclib_api.get_lyrics(artist=artist, track=clean_title, duration=video_info.get('duration'))
+        lrclib_source = None
+        if lrclib_lyrics and not lrclib_lyrics.instrumental:
+            # Converter LRCLibLyrics para dict para create_lrclib_source
+            lrclib_dict = {
+                'artistName': lrclib_lyrics.artist_name,
+                'trackName': lrclib_lyrics.track_name,
+                'albumName': lrclib_lyrics.album_name,
+                'instrumental': lrclib_lyrics.instrumental
+            }
+            lrclib_source = create_lrclib_source(lrclib_dict)
+
+        # Buscar no Musicbrainz
+        song_info = search_musicbrainz(title, artist)
+        musicbrainz_source = create_musicbrainz_source(song_info)
+
+        # Validar com múltiplas fontes
+        validator = MetadataValidator()
+        validated = validator.validate_metadata(
+            youtube_artist=youtube_artist,
+            youtube_title=youtube_title,
+            lrclib_data=lrclib_source,
+            musicbrainz_data=musicbrainz_source
+        )
+
+        # Exibir resultado da validação
+        print(f"{bright_green_highlighted('✓ Metadados validados:')}")
+        print(f"  Artista: {cyan_highlighted(validated.artist)}")
+        print(f"  Música: {cyan_highlighted(validated.title)}")
+        print(f"  Fonte primária: {cyan_highlighted(validated.primary_source)}")
+        print(f"  Confiança: {cyan_highlighted(f'{validated.confidence*100:.0f}%')}")
+        print(f"  Concordância entre fontes: {cyan_highlighted(f'{validated.sources_agreement*100:.0f}%')}")
+
+        if validated.sources_agreement < 0.7:
+            print(f"{yellow_highlighted('⚠️  Aviso: Baixa concordância entre fontes - usando melhor estimativa')}")
+
+        # Usar metadados validados
+        final_artist = validated.artist
+        final_title = validated.title
+        basename_without_ext = sanitize_filename(f"{final_artist} - {final_title}")
+
+        # Atualizar song_info com dados validados (manter metadados extras do Musicbrainz)
+        song_info.artist = final_artist
+        song_info.title = final_title
+        if validated.year:
+            song_info.year = str(validated.year)  # SongInfo.year é string
+        if validated.album:
+            # Adicionar album se necessário (song_info não tem campo album padrão)
+            pass
+
+        print()
         basename = basename_without_ext + ".mp3"
         song_output = os.path.join(output_folder_path, basename_without_ext)
         song_output = get_unused_song_output_dir(song_output)
         os_helper.create_folder(song_output)
-        
+
         # Download audio (always required)
         __download_youtube_audio(input_url, basename_without_ext, song_output, cookiefile, audio_quality)
-        
+
         # Download video (optional)
         if download_video:
             try:
@@ -357,7 +431,7 @@ def download_from_youtube(input_url: str, output_folder_path: str, cookiefile: s
                 cover_url = __download_youtube_thumbnail(input_url, basename_without_ext, song_output, cookiefile)
             except Exception as e:
                 print(f"{yellow_highlighted(f'Aviso: Não foi possível baixar a thumbnail: {str(e)}')}")
-        
+
         # Get BPM from audio file
         audio_file_path = os.path.join(song_output, basename)
         try:
@@ -365,39 +439,40 @@ def download_from_youtube(input_url: str, output_folder_path: str, cookiefile: s
         except Exception as e:
             print(f"{yellow_highlighted(f'Aviso: Não foi possível calcular BPM: {str(e)}')}")
             real_bpm = 120  # Default BPM
-        
+
         # Save download metadata
         downloader.save_download_metadata(video_info, song_output)
-        
+
         print(f"{green_highlighted('Download do YouTube concluído com sucesso!')}")
-        
+
+        # Retornar MediaInfo com dados do YouTube (mais confiáveis para LRCLib)
         return (
             basename_without_ext,
             song_output,
             audio_file_path,
             MediaInfo(
-                artist=song_info.artist, 
-                title=song_info.title, 
-                year=song_info.year, 
-                genre=song_info.genres, 
+                artist=youtube_artist,  # Usar dados do YouTube para LRCLib
+                title=youtube_title,     # Dados originais são mais precisos
+                year=song_info.year,     # Metadados extras do Musicbrainz
+                genre=song_info.genres,  # Metadados extras do Musicbrainz
                 bpm=real_bpm,
-                cover_url=cover_url, 
+                cover_url=cover_url,
                 video_url=input_url
             ),
         )
-        
+
     except Exception as e:
         print(f"{red_highlighted(f'Erro no download do YouTube: {str(e)}')}")
         raise
 
 
-def enhanced_download_from_youtube(input_url: str, output_folder_path: str, 
+def enhanced_download_from_youtube(input_url: str, output_folder_path: str,
                                  options: Optional[Dict[str, Any]] = None) -> tuple[str, str, str, MediaInfo]:
     """Enhanced YouTube download with full configuration options"""
-    
+
     if options is None:
         options = {}
-    
+
     return download_from_youtube(
         input_url=input_url,
         output_folder_path=output_folder_path,

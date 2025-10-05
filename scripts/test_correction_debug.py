@@ -28,10 +28,10 @@ print("-" * 60)
 for tag, i1, i2, j1, j2 in matcher.get_opcodes():
     trans_slice = transcribed[i1:i2]
     ref_slice = reference[j1:j2]
-    
+
     print(f"\n{tag:10} | Trans[{i1}:{i2}] = {trans_slice}")
     print(f"           | Ref  [{j1}:{j2}] = {ref_slice}")
-    
+
     if tag == 'replace':
         print("           | ✓ CORREÇÃO DETECTADA")
     elif tag == 'equal':
@@ -67,10 +67,10 @@ print("-" * 60)
 for tag, i1, i2, j1, j2 in matcher2.get_opcodes():
     trans_part = full_trans[i1:i2]
     ref_part = full_ref[j1:j2]
-    
+
     print(f"\n{tag:10} | Trans[{i1:3}:{i2:3}] = '{trans_part}'")
     print(f"           | Ref  [{j1:3}:{j2:3}] = '{ref_part}'")
-    
+
     if tag == 'replace':
         print(f"           | ✓ CORREÇÃO: '{trans_part}' -> '{ref_part}'")
 

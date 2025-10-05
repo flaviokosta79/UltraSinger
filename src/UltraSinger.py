@@ -562,7 +562,7 @@ def transcribe_audio(cache_folder_path: str, processing_audio_path: str) -> Tran
             print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('LRCLib:')} {cyan_highlighted('Using LRCLib API for enhanced transcription')}")
             try:
                 from modules.LRCLib.lrclib_integration import LRCLibWhisperXIntegration
-                
+
                 lrclib_integration = LRCLibWhisperXIntegration()
                 lrclib_result = lrclib_integration.transcribe_with_lrclib(
                     audio_path=processing_audio_path,
@@ -576,11 +576,11 @@ def transcribe_audio(cache_folder_path: str, processing_audio_path: str) -> Tran
                     compute_type=settings.whisper_compute_type,
                     language=settings.language
                 )
-                
+
                 # Converter resultado do LRCLib para TranscriptionResult
                 from modules.Speech_Recognition.TranscriptionResult import TranscriptionResult
                 from modules.Speech_Recognition.TranscribedData import TranscribedData
-                
+
                 transcribed_data = [
                     TranscribedData(
                         word=seg['text'].strip(),
@@ -589,7 +589,7 @@ def transcribe_audio(cache_folder_path: str, processing_audio_path: str) -> Tran
                     )
                     for seg in lrclib_result['segments']
                 ]
-                
+
                 transcription_result = TranscriptionResult(
                     transcribed_data=transcribed_data,
                     detected_language=lrclib_result.get('language', settings.language)
@@ -600,7 +600,7 @@ def transcribe_audio(cache_folder_path: str, processing_audio_path: str) -> Tran
                 print(f"{ULTRASINGER_HEAD} {gold_highlighted('Fallback:')} {cyan_highlighted('Using standard WhisperX transcription')}")
                 # Fallback para transcrição padrão em caso de erro
                 settings.use_lrclib = False
-        
+
         # Transcrição padrão (sem LRCLib ou em caso de fallback)
         if not settings.use_lrclib or transcription_result is None:
             if not settings.whisper_align_model is None: whisper_align_model_string = settings.whisper_align_model.replace("/", "_")
@@ -641,16 +641,22 @@ def infos_from_audio_input_file() -> tuple[str, str, str, MediaInfo]:
     else:
         title = basename_without_ext
 
+    # Preservar dados originais do arquivo antes de consultar Musicbrainz
+    original_artist = artist
+    original_title = title
+
     song_info = search_musicbrainz(title, artist)
     basename_without_ext = f"{song_info.artist} - {song_info.title}"
     extension = os.path.splitext(basename)[1]
     basename = f"{basename_without_ext}{extension}"
 
     # Configurar informações do LRCLib se habilitado
+    # IMPORTANTE: Usar dados originais do arquivo se Musicbrainz estiver muito diferente
     if settings.use_lrclib:
-        settings.lrclib_artist = song_info.artist
-        settings.lrclib_track = song_info.title
-        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('LRCLib:')} {cyan_highlighted(f'Artist: {song_info.artist}, Track: {song_info.title}')}")
+        # Priorizar dados originais para LRCLib (mais confiáveis para busca de letras)
+        settings.lrclib_artist = original_artist if original_artist else song_info.artist
+        settings.lrclib_track = original_title if original_title else song_info.title
+        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('LRCLib:')} {cyan_highlighted(f'Artist: {settings.lrclib_artist}, Track: {settings.lrclib_track}')}")
 
     song_folder_output_path = os.path.join(settings.output_folder_path, basename_without_ext)
     song_folder_output_path = get_unused_song_output_dir(song_folder_output_path)

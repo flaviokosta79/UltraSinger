@@ -6,8 +6,9 @@ Integra API do LRCLib com WhisperX para melhorar transcrições
 Features:
 - Busca automática de letras no LRCLib
 - Extração de hotwords da letra para WhisperX 3.4.3
-- Correção de transcrição usando letra como referência
+- Correção de transcrição usando letra como referência (LyricsCorrector)
 - Merge inteligente de timestamps WhisperX + texto LRCLib
+- Pós-processamento inteligente com contexto fonético
 """
 
 import requests
@@ -15,6 +16,13 @@ import re
 from typing import Optional, List, Dict, Tuple
 from difflib import SequenceMatcher
 from dataclasses import dataclass
+
+# Importar corretor avançado com pós-processamento inteligente
+from .lyrics_corrector import (
+    LyricsCorrector as AdvancedLyricsCorrector,
+    create_corrector_from_lrclib,
+    PhoneticMatcher
+)
 
 
 @dataclass
@@ -233,8 +241,8 @@ class LyricsCorrector:
     MODE_HYBRID = "hybrid"          # Híbrido: usa LRCLib mas mantém estrutura WhisperX
 
     def __init__(
-        self, 
-        similarity_threshold: float = 0.8, 
+        self,
+        similarity_threshold: float = 0.8,
         mode: str = MODE_CORRECTION  # Modo padrão: correção (mais conservador)
     ):
         """
@@ -247,7 +255,7 @@ class LyricsCorrector:
         """
         self.similarity_threshold = similarity_threshold
         self.mode = mode
-        
+
         # Manter compatibilidade com código antigo
         self.use_sync_mode = (mode == self.MODE_SYNC)
 
@@ -284,14 +292,14 @@ class LyricsCorrector:
         if self.mode == self.MODE_SYNC:
             print("🔄 Modo SYNC: Letra 100% LRCLib + timestamps WhisperX")
             return self._sync_lrclib_with_whisperx(whisperx_segments, lrclib_clean)
-        
+
         elif self.mode == self.MODE_HYBRID:
             print("🔀 Modo HYBRID: LRCLib com estrutura WhisperX")
             return self._hybrid_sync(whisperx_segments, lrclib_clean)
-        
+
         else:  # MODE_CORRECTION (padrão)
             print("✏️ Modo CORRECTION: Correção palavra por palavra")
-            
+
             if similarity >= 0.95:
                 print("ℹ️ Transcrição muito precisa, mas verificando nomes próprios...")
 
@@ -395,56 +403,56 @@ class LyricsCorrector:
     ) -> Tuple[List[Dict], int]:
         """
         Modo híbrido: Usa letra LRCLib mas mantém estrutura de segmentos do WhisperX
-        
+
         Estratégia:
         1. Mantém número de segmentos do WhisperX (estrutura temporal)
         2. Substitui texto de cada segmento por palavras corretas do LRCLib
         3. Alinha usando SequenceMatcher para correções inteligentes
         4. Melhor para manter timing preciso enquanto corrige palavras
-        
+
         Args:
             whisperx_segments: Segmentos com timestamps do WhisperX
             lrclib_lyrics: Letra correta do LRCLib
-            
+
         Returns:
             Tupla (segmentos_corrigidos, numero_de_correcoes)
         """
-        
+
         # Extrair palavras de ambas as fontes
         lrclib_words = lrclib_lyrics.split()
         whisperx_words = [seg['text'].strip() for seg in whisperx_segments]
-        
+
         print(f"🔍 WhisperX: {len(whisperx_words)} palavras | LRCLib: {len(lrclib_words)} palavras")
-        
+
         # Alinhar palavras usando SequenceMatcher
         matcher = SequenceMatcher(
             None,
             [w.lower() for w in whisperx_words],
             [w.lower() for w in lrclib_words]
         )
-        
+
         # Construir mapa de correções: índice_whisperx -> palavra_lrclib
         corrections_map = {}
         corrections_count = 0
-        
+
         for tag, i1, i2, j1, j2 in matcher.get_opcodes():
             if tag == 'equal':
                 # Palavras iguais - manter
                 for offset in range(min(i2 - i1, j2 - j1)):
                     corrections_map[i1 + offset] = lrclib_words[j1 + offset]
-                    
+
             elif tag == 'replace':
                 # Palavras diferentes - corrigir
                 trans_slice = whisperx_words[i1:i2]
                 ref_slice = lrclib_words[j1:j2]
-                
+
                 # Caso 1: Mesma quantidade - substituição 1:1
                 if len(trans_slice) == len(ref_slice):
                     for offset in range(len(trans_slice)):
                         corrections_map[i1 + offset] = ref_slice[offset]
                         if trans_slice[offset].lower() != ref_slice[offset].lower():
                             corrections_count += 1
-                
+
                 # Caso 2: Mais palavras WhisperX - consolidar
                 elif len(trans_slice) > len(ref_slice) and ref_slice:
                     # Primeira palavra recebe todas as correções concatenadas
@@ -453,16 +461,16 @@ class LyricsCorrector:
                     for idx in range(1, len(trans_slice)):
                         corrections_map[i1 + idx] = ""
                     corrections_count += 1
-                
+
                 # Caso 3: Menos palavras WhisperX - expandir
                 elif len(trans_slice) < len(ref_slice) and trans_slice:
                     # Expandir primeira palavra
                     corrections_map[i1] = " ".join(ref_slice)
                     corrections_count += 1
-        
+
         # Aplicar correções mantendo timestamps do WhisperX
         corrected_segments = []
-        
+
         for idx, seg in enumerate(whisperx_segments):
             if idx in corrections_map and corrections_map[idx]:  # Tem correção e não é remoção
                 corrected_segments.append({
@@ -473,9 +481,9 @@ class LyricsCorrector:
             elif idx not in corrections_map:
                 # Sem correção - manter original
                 corrected_segments.append(seg.copy())
-        
+
         print(f"✅ {corrections_count} correções aplicadas (modo híbrido)")
-        
+
         return corrected_segments, corrections_count
 
     def _clean_lyrics(self, lyrics: str) -> str:
@@ -599,10 +607,43 @@ class LyricsCorrector:
 class LRCLibWhisperXIntegration:
     """Integração completa LRCLib + WhisperX"""
 
-    def __init__(self, whisperx_version: str = "3.4.3"):
+    def __init__(
+        self,
+        whisperx_version: str = "3.4.3",
+        correction_mode: Optional[str] = None
+    ):
+        """
+        Args:
+            whisperx_version: Versão do WhisperX
+            correction_mode: Modo de correção ('correction', 'hybrid', 'sync')
+                            Se None, usa variável de ambiente LRCLIB_MODE ou padrão
+        """
+        import os
+
         self.lrclib = LRCLibAPI()
         self.hotword_extractor = HotwordExtractor()
-        self.corrector = LyricsCorrector()
+
+        # Determinar modo de correção
+        if correction_mode is None:
+            # Tentar variável de ambiente
+            correction_mode = os.environ.get('LRCLIB_MODE', 'correction')
+
+        # Validar modo
+        valid_modes = [
+            LyricsCorrector.MODE_CORRECTION,
+            LyricsCorrector.MODE_HYBRID,
+            LyricsCorrector.MODE_SYNC
+        ]
+
+        if correction_mode not in valid_modes:
+            print(f"⚠️  Modo inválido '{correction_mode}', usando 'correction'")
+            correction_mode = LyricsCorrector.MODE_CORRECTION
+
+        self.correction_mode = correction_mode
+        self.corrector = LyricsCorrector(mode=correction_mode)
+
+        print(f"🔧 LRCLib modo de correção: {correction_mode.upper()}")
+
         self.whisperx_version = whisperx_version
         self.supports_hotwords = whisperx_version >= "3.4.0"
 
@@ -696,6 +737,16 @@ class LRCLibWhisperXIntegration:
         if language:
             load_kwargs["language"] = language
 
+        # CORREÇÃO: Hotwords devem ir em asr_options do load_model()
+        if hotwords and self.supports_hotwords:
+            hotwords_string = " ".join(hotwords)  # Converter lista para string
+            load_kwargs["asr_options"] = {
+                "hotwords": hotwords_string,
+                "initial_prompt": f"Música: {artist} - {track}"
+            }
+            print(f"   ✨ Configurando {len(hotwords)} hotwords no modelo")
+            print(f"      Hotwords: {hotwords_string[:100]}...")
+
         model = whisperx.load_model(model_name, **load_kwargs)
         audio = whisperx.load_audio(audio_path)
 
@@ -704,9 +755,7 @@ class LRCLibWhisperXIntegration:
         if language:
             transcribe_kwargs["language"] = language
 
-        if hotwords and self.supports_hotwords:
-            transcribe_kwargs["hotwords"] = hotwords  # type: ignore
-            print(f"   ✨ Usando {len(hotwords)} hotwords do LRCLib")
+        # Nota: hotwords agora estão no modelo, não no transcribe()
 
         result = model.transcribe(audio, batch_size=batch_size, **transcribe_kwargs)
 
@@ -714,12 +763,44 @@ class LRCLibWhisperXIntegration:
         print(f"   • Idioma: {result['language']}")
         print(f"   • Segmentos: {len(result['segments'])}")
 
-        # PASSO 4: Corrigir com LRCLib
+        # PASSO 3.5: Pós-processamento avançado (correção por contexto)
+        advanced_corrections = []
+        if lrclib_data and not lrclib_data.instrumental and hotwords:
+            print("\n🔧 Aplicando pós-processamento inteligente...")
+
+            # Criar corretor avançado
+            advanced_corrector = create_corrector_from_lrclib(
+                lrclib_data={'plainLyrics': lrclib_data.plain_lyrics},
+                hotwords=hotwords,
+                enable_phonetic=True,
+                enable_context=True,
+                confidence_threshold=0.7
+            )
+
+            # Aplicar correções a cada segmento
+            for seg in result['segments']:
+                original_text = seg['text']
+                corrected_text, corrections_list = advanced_corrector.correct_transcription(original_text)
+
+                if corrections_list:
+                    seg['text'] = corrected_text
+                    advanced_corrections.extend(corrections_list)
+                    print(f"   🔧 Segmento {seg.get('start', 0):.1f}s corrigido")
+
+            if advanced_corrections:
+                print(f"   ✅ {len(advanced_corrections)} correções avançadas aplicadas")
+                # Mostrar exemplos
+                for corr in advanced_corrections[:3]:
+                    print(f"      • '{corr['original']}' → '{corr['corrected']}'")
+            else:
+                print("   ✅ Nenhuma correção avançada necessária")
+
+        # PASSO 4: Corrigir com LRCLib (método antigo, mantido para compatibilidade)
         corrections = 0
         corrected_segments = result['segments']
 
         if lrclib_data and not lrclib_data.instrumental:
-            print("\n✏️ Aplicando correções do LRCLib...")
+            print("\n✏️ Aplicando correções do LRCLib (método clássico)...")
             corrected_segments, corrections = self.corrector.correct(
                 result['segments'],
                 lrclib_data.plain_lyrics
@@ -733,6 +814,10 @@ class LRCLibWhisperXIntegration:
         # Resultado final
         print("\n" + "="*70)
         print("✅ TRANSCRIÇÃO COMPLETA!")
+        if advanced_corrections:
+            print(f"   • Correções avançadas: {len(advanced_corrections)}")
+        if corrections > 0:
+            print(f"   • Correções clássicas: {corrections}")
         print("="*70)
 
         return {
@@ -741,7 +826,9 @@ class LRCLibWhisperXIntegration:
             'lrclib_found': lrclib_data is not None,
             'lrclib_data': lrclib_data,
             'hotwords_used': hotwords,
-            'corrections_applied': corrections
+            'corrections_applied': corrections,
+            'advanced_corrections': len(advanced_corrections),
+            'advanced_corrections_list': advanced_corrections
         }
 
 
