@@ -557,28 +557,56 @@ def transcribe_audio(cache_folder_path: str, processing_audio_path: str) -> Tran
     transcription_result = None
     whisper_align_model_string = None
     if settings.transcriber == "whisper":
-        if not settings.whisper_align_model is None: whisper_align_model_string = settings.whisper_align_model.replace("/", "_")
-        transcription_config = f"{settings.transcriber}_{settings.whisper_model.value}_{settings.pytorch_device}_{whisper_align_model_string}_{settings.whisper_batch_size}_{settings.whisper_compute_type}_{settings.language}"
-        transcription_path = os.path.join(cache_folder_path, f"{transcription_config}.json")
-        cached_transcription_available = check_file_exists(transcription_path)
-        if settings.skip_cache_transcription or not cached_transcription_available:
-            transcription_result = transcribe_with_whisper(
-                processing_audio_path,
-                settings.whisper_model,
-                settings.pytorch_device,
-                settings.whisper_align_model,
-                settings.whisper_batch_size,
-                settings.whisper_compute_type,
-                settings.language,
-                settings.keep_numbers,
-            )
-            with open(transcription_path, "w", encoding=FILE_ENCODING) as file:
-                file.write(transcription_result.to_json())
-        else:
-            print(f"{ULTRASINGER_HEAD} {green_highlighted('cache')} reusing cached transcribed data")
-            with open(transcription_path) as file:
-                json = file.read()
-                transcription_result = TranscriptionResult.from_json(json)
+        # Verificar se LRCLib está habilitado e temos informações da música
+        if settings.use_lrclib and settings.lrclib_artist and settings.lrclib_track:
+            print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('LRCLib:')} {cyan_highlighted('Using LRCLib API for enhanced transcription')}")
+            try:
+                from modules.LRCLib.lrclib_integration import LRCLibWhisperXIntegration
+                
+                lrclib_integration = LRCLibWhisperXIntegration()
+                transcription_result = lrclib_integration.transcribe_with_lrclib(
+                    audio_path=processing_audio_path,
+                    artist=settings.lrclib_artist,
+                    track=settings.lrclib_track,
+                    album=settings.lrclib_album,
+                    whisper_model=settings.whisper_model.value,
+                    device=settings.pytorch_device,
+                    align_model=settings.whisper_align_model,
+                    batch_size=settings.whisper_batch_size,
+                    compute_type=settings.whisper_compute_type,
+                    language=settings.language
+                )
+                print(f"{ULTRASINGER_HEAD} {green_highlighted('LRCLib:')} {cyan_highlighted('Transcription enhanced with LRCLib lyrics')}")
+            except Exception as e:
+                print(f"{ULTRASINGER_HEAD} {red_highlighted('LRCLib Error:')} {str(e)}")
+                print(f"{ULTRASINGER_HEAD} {gold_highlighted('Fallback:')} {cyan_highlighted('Using standard WhisperX transcription')}")
+                # Fallback para transcrição padrão em caso de erro
+                settings.use_lrclib = False
+        
+        # Transcrição padrão (sem LRCLib ou em caso de fallback)
+        if not settings.use_lrclib or transcription_result is None:
+            if not settings.whisper_align_model is None: whisper_align_model_string = settings.whisper_align_model.replace("/", "_")
+            transcription_config = f"{settings.transcriber}_{settings.whisper_model.value}_{settings.pytorch_device}_{whisper_align_model_string}_{settings.whisper_batch_size}_{settings.whisper_compute_type}_{settings.language}"
+            transcription_path = os.path.join(cache_folder_path, f"{transcription_config}.json")
+            cached_transcription_available = check_file_exists(transcription_path)
+            if settings.skip_cache_transcription or not cached_transcription_available:
+                transcription_result = transcribe_with_whisper(
+                    processing_audio_path,
+                    settings.whisper_model,
+                    settings.pytorch_device,
+                    settings.whisper_align_model,
+                    settings.whisper_batch_size,
+                    settings.whisper_compute_type,
+                    settings.language,
+                    settings.keep_numbers,
+                )
+                with open(transcription_path, "w", encoding=FILE_ENCODING) as file:
+                    file.write(transcription_result.to_json())
+            else:
+                print(f"{ULTRASINGER_HEAD} {green_highlighted('cache')} reusing cached transcribed data")
+                with open(transcription_path) as file:
+                    json = file.read()
+                    transcription_result = TranscriptionResult.from_json(json)
     else:
         raise NotImplementedError
     return transcription_result
@@ -599,6 +627,12 @@ def infos_from_audio_input_file() -> tuple[str, str, str, MediaInfo]:
     basename_without_ext = f"{song_info.artist} - {song_info.title}"
     extension = os.path.splitext(basename)[1]
     basename = f"{basename_without_ext}{extension}"
+
+    # Configurar informações do LRCLib se habilitado
+    if settings.use_lrclib:
+        settings.lrclib_artist = song_info.artist
+        settings.lrclib_track = song_info.title
+        print(f"{ULTRASINGER_HEAD} {bright_green_highlighted('LRCLib:')} {cyan_highlighted(f'Artist: {song_info.artist}, Track: {song_info.title}')}")
 
     song_folder_output_path = os.path.join(settings.output_folder_path, basename_without_ext)
     song_folder_output_path = get_unused_song_output_dir(song_folder_output_path)
@@ -801,6 +835,16 @@ def init_settings(argv: list[str]) -> Settings:
             settings.interactive_mode = True
         elif opt in ("--ffmpeg"):
             settings.user_ffmpeg_path = arg
+        elif opt in ("--lrclib"):
+            settings.use_lrclib = True
+        elif opt in ("--lrclib_artist"):
+            settings.use_lrclib = True
+            settings.lrclib_artist = arg
+        elif opt in ("--lrclib_track"):
+            settings.use_lrclib = True
+            settings.lrclib_track = arg
+        elif opt in ("--lrclib_album"):
+            settings.lrclib_album = arg
     if settings.output_folder_path == "":
         if settings.input_file_path.startswith("https:"):
             dirname = os.getcwd()
@@ -842,7 +886,11 @@ def arg_options():
         "keep_numbers",
         "interactive",
         "cookiefile=",
-        "ffmpeg="
+        "ffmpeg=",
+        "lrclib",
+        "lrclib_artist=",
+        "lrclib_track=",
+        "lrclib_album="
     ]
     return long, short
 

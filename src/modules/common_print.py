@@ -62,6 +62,13 @@ def print_help() -> None:
     [yt-dlp]
     --cookiefile            File name where cookies should be read from and dumped to.
     
+    [lrclib]
+    --lrclib                Enable LRCLib API integration for enhanced transcription accuracy.
+                            Uses lyrics from LRCLib database as hotwords to improve recognition.
+    --lrclib_artist         Override artist name for LRCLib search (auto-detected by default).
+    --lrclib_track          Override track name for LRCLib search (auto-detected by default).
+    --lrclib_album          Album name for more accurate LRCLib search (optional).
+    
     [device]
     --force_cpu             Force all steps to be processed on CPU.
     --force_whisper_cpu     Force whisper transcription to be processed on CPU.

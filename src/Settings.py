@@ -85,3 +85,9 @@ class Settings:
     rtx_5060ti_fallback_enabled = True
     rtx_5060ti_vram_limit_gb = 14.0  # Leave 2GB for system
     rtx_5060ti_config: Optional[Dict[str, Any]] = None
+
+    # LRCLib Integration Settings
+    use_lrclib = False  # Enable LRCLib API for lyrics correction
+    lrclib_artist = None  # Artist name for LRCLib search
+    lrclib_track = None  # Track name for LRCLib search
+    lrclib_album = None  # Album name for LRCLib search (optional)
