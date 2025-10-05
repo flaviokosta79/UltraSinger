@@ -264,15 +264,23 @@ class LyricsCorrector:
 
         print(f"📊 Similaridade WhisperX vs LRCLib: {similarity:.2%}")
 
-        if similarity >= self.similarity_threshold:
-            print("✅ Transcrição muito similar à letra, sem correções necessárias")
-            return whisperx_segments, 0
-
+        # SEMPRE aplicar correções, mesmo com alta similaridade
+        # Motivo: nomes próprios, acentos e pequenas diferenças são importantes
+        if similarity >= 0.95:
+            print("ℹ️ Transcrição muito precisa, mas verificando nomes próprios...")
+        
         # Aplicar correções palavra por palavra
-        return self._apply_word_corrections(
+        corrected, num_corrections = self._apply_word_corrections(
             whisperx_segments,
             lrclib_clean
         )
+        
+        if num_corrections > 0:
+            print(f"✏️ {num_corrections} correções aplicadas usando LRCLib")
+        else:
+            print("ℹ️ Nenhuma correção necessária")
+        
+        return corrected, num_corrections
 
     def _clean_lyrics(self, lyrics: str) -> str:
         """Remove timestamps e normaliza texto"""
@@ -292,62 +300,104 @@ class LyricsCorrector:
         reference_lyrics: str
     ) -> Tuple[List[Dict], int]:
         """
-        Aplica correções palavra por palavra
-
+        Aplica correções palavra por palavra usando alinhamento inteligente
+        
         Estratégia:
-        1. Divide referência em palavras
-        2. Para cada segmento, tenta achar correspondência
-        3. Corrige palavras com baixa similaridade
+        1. Extrai todas as palavras da transcrição e referência
+        2. Alinha usando SequenceMatcher (lida com inserções/deleções/substituições)
+        3. Aplica correções mantendo timestamps dos segmentos originais
+        4. Lida com nomes compostos (ex: "janela e monê" -> "Janelle Monáe")
         """
-
-        reference_words = reference_lyrics.lower().split()
-        corrections = 0
+        
+        # Extrair todas as palavras transcritas
+        transcribed_words = []
+        for seg in segments:
+            transcribed_words.extend(seg['text'].split())
+        
+        # Extrair palavras de referência
+        reference_words = reference_lyrics.split()
+        
+        # Alinhar palavras usando SequenceMatcher
+        matcher = SequenceMatcher(
+            None,
+            [w.lower() for w in transcribed_words],
+            [w.lower() for w in reference_words]
+        )
+        
+        # Construir mapa de correções: índice_transcrito -> palavra_correta
+        word_corrections = {}
+        corrections_made = 0
+        
+        for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+            if tag == 'replace':
+                # Palavras diferentes - aplicar correção
+                # i1:i2 são índices em transcribed_words
+                # j1:j2 são índices em reference_words
+                
+                trans_slice = transcribed_words[i1:i2]
+                ref_slice = reference_words[j1:j2]
+                
+                # Caso 1: Mesma quantidade de palavras - substituição 1:1
+                if len(trans_slice) == len(ref_slice):
+                    for idx, (trans_w, ref_w) in enumerate(zip(trans_slice, ref_slice)):
+                        if trans_w.lower() != ref_w.lower():
+                            word_corrections[i1 + idx] = ref_w
+                            corrections_made += 1
+                
+                # Caso 2: Mais palavras transcritas (3) que referência (2)
+                # Ex: ["janela", "e", "monê"] -> ["Janelle", "Monáe"]
+                elif len(trans_slice) > len(ref_slice):
+                    # Marcar primeiro conjunto de palavras para correção composta
+                    combined_ref = " ".join(ref_slice)
+                    word_corrections[i1] = combined_ref
+                    
+                    # Marcar palavras subsequentes para remoção
+                    for idx in range(1, len(trans_slice)):
+                        word_corrections[i1 + idx] = ""  # Remove
+                    
+                    corrections_made += 1
+                
+                # Caso 3: Menos palavras transcritas que referência
+                # Ex: ["Janelle"] -> ["Janelle", "Monáe"]
+                elif len(trans_slice) < len(ref_slice):
+                    # Expandir primeira palavra
+                    combined_ref = " ".join(ref_slice)
+                    word_corrections[i1] = combined_ref
+                    corrections_made += 1
+            
+            elif tag == 'delete':
+                # Palavras extras na transcrição - remover
+                for idx in range(i1, i2):
+                    word_corrections[idx] = ""
+                    corrections_made += 1
+            
+            elif tag == 'insert':
+                # Palavras faltando na transcrição - adicionar após posição anterior
+                # (mais complexo, skip por enquanto)
+                pass
+        
+        # Aplicar correções aos segmentos mantendo timestamps
         corrected_segments = []
-
-        ref_index = 0
-
+        word_idx = 0
+        
         for segment in segments:
             segment_copy = segment.copy()
-            segment_words = segment['text'].split()
-
-            # Tentar casar palavras do segmento com referência
+            words = segment['text'].split()
             corrected_words = []
-
-            for word in segment_words:
-                word_clean = word.strip('.,!?;:"()[]{}').lower()
-
-                # Procurar palavra similar na referência
-                if ref_index < len(reference_words):
-                    ref_word = reference_words[ref_index]
-
-                    similarity = SequenceMatcher(
-                        None, word_clean, ref_word
-                    ).ratio()
-
-                    if similarity >= 0.7:
-                        # Palavra similar, usar da referência
-                        corrected_words.append(ref_word)
-                        ref_index += 1
-
-                    elif similarity >= 0.4:
-                        # Palavra parcialmente similar, possivelmente erro
-                        # Usar da referência e marcar correção
-                        corrected_words.append(f"{ref_word}")
-                        corrections += 1
-                        ref_index += 1
-
-                    else:
-                        # Muito diferente, manter original
-                        corrected_words.append(word)
-
+            
+            for word in words:
+                if word_idx in word_corrections:
+                    corrected = word_corrections[word_idx]
+                    if corrected:  # Não é remoção
+                        corrected_words.append(corrected)
                 else:
-                    # Fim da referência, manter original
                     corrected_words.append(word)
-
+                word_idx += 1
+            
             segment_copy['text'] = " ".join(corrected_words)
             corrected_segments.append(segment_copy)
-
-        return corrected_segments, corrections
+        
+        return corrected_segments, corrections_made
 
 
 class LRCLibWhisperXIntegration:
