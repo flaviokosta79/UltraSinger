@@ -564,17 +564,35 @@ def transcribe_audio(cache_folder_path: str, processing_audio_path: str) -> Tran
                 from modules.LRCLib.lrclib_integration import LRCLibWhisperXIntegration
                 
                 lrclib_integration = LRCLibWhisperXIntegration()
-                transcription_result = lrclib_integration.transcribe_with_lrclib(
+                lrclib_result = lrclib_integration.transcribe_with_lrclib(
                     audio_path=processing_audio_path,
                     artist=settings.lrclib_artist,
                     track=settings.lrclib_track,
                     album=settings.lrclib_album,
-                    whisper_model=settings.whisper_model.value,
+                    model_name=settings.whisper_model.value,
                     device=settings.pytorch_device,
                     align_model=settings.whisper_align_model,
                     batch_size=settings.whisper_batch_size,
                     compute_type=settings.whisper_compute_type,
                     language=settings.language
+                )
+                
+                # Converter resultado do LRCLib para TranscriptionResult
+                from modules.Speech_Recognition.TranscriptionResult import TranscriptionResult
+                from modules.Speech_Recognition.TranscribedData import TranscribedData
+                
+                transcribed_data = [
+                    TranscribedData(
+                        word=seg['text'].strip(),
+                        start=seg['start'],
+                        end=seg['end']
+                    )
+                    for seg in lrclib_result['segments']
+                ]
+                
+                transcription_result = TranscriptionResult(
+                    transcribed_data=transcribed_data,
+                    detected_language=lrclib_result.get('language', settings.language)
                 )
                 print(f"{ULTRASINGER_HEAD} {green_highlighted('LRCLib:')} {cyan_highlighted('Transcription enhanced with LRCLib lyrics')}")
             except Exception as e:

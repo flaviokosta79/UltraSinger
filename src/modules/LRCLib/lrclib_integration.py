@@ -368,7 +368,12 @@ class LRCLibWhisperXIntegration:
         album: Optional[str] = None,
         duration: Optional[int] = None,
         device: str = "cuda",
-        use_lrclib_cache: bool = False
+        use_lrclib_cache: bool = False,
+        model_name: str = "base",
+        align_model: Optional[str] = None,
+        batch_size: int = 16,
+        compute_type: Optional[str] = None,
+        language: Optional[str] = None
     ) -> Dict:
         """
         Pipeline completo:
@@ -436,16 +441,24 @@ class LRCLibWhisperXIntegration:
 
         import whisperx
 
-        model = whisperx.load_model("base", device=device)
+        model = whisperx.load_model(
+            model_name, 
+            device=device,
+            compute_type=compute_type,
+            language=language
+        )
         audio = whisperx.load_audio(audio_path)
 
-        transcribe_kwargs: Dict = {"language": "pt"}
+        transcribe_kwargs: Dict = {}
+        
+        if language:
+            transcribe_kwargs["language"] = language
 
         if hotwords and self.supports_hotwords:
             transcribe_kwargs["hotwords"] = hotwords  # type: ignore
             print(f"   ✨ Usando {len(hotwords)} hotwords do LRCLib")
 
-        result = model.transcribe(audio, **transcribe_kwargs)
+        result = model.transcribe(audio, batch_size=batch_size, **transcribe_kwargs)
 
         print(f"   ✅ Transcrição concluída")
         print(f"   • Idioma: {result['language']}")
