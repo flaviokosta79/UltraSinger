@@ -441,16 +441,20 @@ class LRCLibWhisperXIntegration:
 
         import whisperx
 
-        model = whisperx.load_model(
-            model_name, 
-            device=device,
-            compute_type=compute_type,
-            language=language
-        )
+        # Preparar kwargs para load_model (remover None)
+        load_kwargs = {
+            "device": device
+        }
+        if compute_type:
+            load_kwargs["compute_type"] = compute_type
+        if language:
+            load_kwargs["language"] = language
+
+        model = whisperx.load_model(model_name, **load_kwargs)
         audio = whisperx.load_audio(audio_path)
 
         transcribe_kwargs: Dict = {}
-        
+
         if language:
             transcribe_kwargs["language"] = language
 
