@@ -33,13 +33,13 @@ class WhisperModel(Enum):
     LARGE_V2 = "large-v2"
     LARGE_V3 = "large-v3"
     LARGE_V3_TURBO = "large-v3-turbo"
-    
+
     # English-only models
     TINY_EN = "tiny.en"
     BASE_EN = "base.en"
     SMALL_EN = "small.en"
     MEDIUM_EN = "medium.en"
-    
+
     @classmethod
     def get_model_info(cls, model: 'WhisperModel') -> dict:
         """Get detailed information about a specific model"""
@@ -52,7 +52,7 @@ class WhisperModel(Enum):
                 "description": "Fastest model, lowest accuracy"
             },
             cls.BASE: {
-                "parameters": "74M", 
+                "parameters": "74M",
                 "vram_required": "~1GB",
                 "relative_speed": "~16x",
                 "multilingual": True,
@@ -60,7 +60,7 @@ class WhisperModel(Enum):
             },
             cls.SMALL: {
                 "parameters": "244M",
-                "vram_required": "~2GB", 
+                "vram_required": "~2GB",
                 "relative_speed": "~6x",
                 "multilingual": True,
                 "description": "Better accuracy, moderate speed"
@@ -68,7 +68,7 @@ class WhisperModel(Enum):
             cls.MEDIUM: {
                 "parameters": "769M",
                 "vram_required": "~5GB",
-                "relative_speed": "~2x", 
+                "relative_speed": "~2x",
                 "multilingual": True,
                 "description": "High accuracy, slower processing"
             },
@@ -81,7 +81,7 @@ class WhisperModel(Enum):
             },
             cls.LARGE_V2: {
                 "parameters": "1550M",
-                "vram_required": "~10GB", 
+                "vram_required": "~10GB",
                 "relative_speed": "1x",
                 "multilingual": True,
                 "description": "Improved large model with better performance"
@@ -89,7 +89,7 @@ class WhisperModel(Enum):
             cls.LARGE_V3: {
                 "parameters": "1550M",
                 "vram_required": "~10GB",
-                "relative_speed": "1x", 
+                "relative_speed": "1x",
                 "multilingual": True,
                 "description": "Latest large model with best accuracy"
             },
@@ -109,7 +109,7 @@ class WhisperModel(Enum):
             },
             cls.BASE_EN: {
                 "parameters": "74M",
-                "vram_required": "~1GB", 
+                "vram_required": "~1GB",
                 "relative_speed": "~16x",
                 "multilingual": False,
                 "description": "English-only, good balance"
@@ -125,12 +125,12 @@ class WhisperModel(Enum):
                 "parameters": "769M",
                 "vram_required": "~5GB",
                 "relative_speed": "~2x",
-                "multilingual": False, 
+                "multilingual": False,
                 "description": "English-only, high accuracy"
             }
         }
         return model_info.get(model, {})
-    
+
     @classmethod
     def get_recommended_model(cls, language: str = None, device: str = "cpu", vram_gb: float = 4.0) -> 'WhisperModel':
         """Get recommended model based on language, device and available VRAM"""
@@ -163,7 +163,7 @@ def get_supported_languages() -> Dict[str, str]:
     """Get list of supported languages with their codes"""
     return {
         "en": "English",
-        "zh": "Chinese", 
+        "zh": "Chinese",
         "de": "German",
         "es": "Spanish",
         "ru": "Russian",
@@ -271,13 +271,13 @@ def validate_language_code(language: str) -> bool:
 def estimate_transcription_time(audio_duration_seconds: float, model: WhisperModel, device: str) -> float:
     """Estimate transcription time based on audio duration, model and device"""
     model_info = WhisperModel.get_model_info(model)
-    
+
     # Base processing time per second of audio
     base_time_per_second = {
         "cpu": 0.5,  # seconds of processing per second of audio
         "cuda": 0.1
     }
-    
+
     # Model speed multipliers (relative to large model)
     speed_multipliers = {
         WhisperModel.TINY: 32,
@@ -293,10 +293,10 @@ def estimate_transcription_time(audio_duration_seconds: float, model: WhisperMod
         WhisperModel.LARGE_V3: 1,
         WhisperModel.LARGE_V3_TURBO: 8  # 8x faster than regular large models
     }
-    
+
     base_time = base_time_per_second.get(device, 0.5)
     speed_multiplier = speed_multipliers.get(model, 1)
-    
+
     estimated_time = (audio_duration_seconds * base_time) / speed_multiplier
     return max(estimated_time, 1.0)  # Minimum 1 second
 
@@ -331,7 +331,7 @@ def number_to_words(line, language='en'):
                 out_tokens.append(token)
         except Exception:
             out_tokens.append(token)
-    return ''.join(out_tokens) 
+    return ''.join(out_tokens)
 
 def replace_code_lines(source, start_token, end_token,
                        replacement, escape_tokens=True):
@@ -367,13 +367,13 @@ def save_transcription_cache(cache_path: str, transcription_result: Transcriptio
             ],
             "detected_language": transcription_result.detected_language
         }
-        
+
         os.makedirs(os.path.dirname(cache_path), exist_ok=True)
         with open(cache_path, 'w', encoding='utf-8') as f:
             json.dump(cache_data, f, ensure_ascii=False, indent=2)
-            
+
         print(f"{ULTRASINGER_HEAD} {green_highlighted('cache')} Transcription saved to cache")
-        
+
     except Exception as e:
         print(f"{ULTRASINGER_HEAD} {yellow_highlighted('Warning:')} Failed to save transcription cache: {str(e)}")
 
@@ -382,10 +382,10 @@ def load_transcription_cache(cache_path: str) -> Optional[TranscriptionResult]:
     try:
         if not os.path.exists(cache_path):
             return None
-            
+
         with open(cache_path, 'r', encoding='utf-8') as f:
             cache_data = json.load(f)
-        
+
         transcribed_data = []
         for td_data in cache_data["transcribed_data"]:
             td = TranscribedData()
@@ -395,11 +395,11 @@ def load_transcription_cache(cache_path: str) -> Optional[TranscriptionResult]:
             td.is_hyphen = td_data.get("is_hyphen", False)
             td.is_word_end = td_data.get("is_word_end", True)
             transcribed_data.append(td)
-        
+
         result = TranscriptionResult(transcribed_data, cache_data["detected_language"])
         print(f"{ULTRASINGER_HEAD} {green_highlighted('cache')} Loaded transcription from cache")
         return result
-        
+
     except Exception as e:
         print(f"{ULTRASINGER_HEAD} {yellow_highlighted('Warning:')} Failed to load transcription cache: {str(e)}")
         return None
@@ -417,21 +417,21 @@ def transcribe_with_whisper(
     skip_cache: bool = False
 ) -> TranscriptionResult:
     """Transcribe with whisper with enhanced features"""
-    
+
     # Check cache first
     if cache_path and not skip_cache:
         cached_result = load_transcription_cache(cache_path)
         if cached_result:
             return cached_result
-    
+
     # Validate device
     device = check_whisper_device_compatibility(device)
-    
+
     # Validate language
     if language and not validate_language_code(language):
         print(f"{ULTRASINGER_HEAD} {yellow_highlighted('Warning:')} Language '{language}' not supported, using auto-detection")
         language = None
-    
+
     # Show model information
     model_info = WhisperModel.get_model_info(model)
     if model_info:
@@ -439,7 +439,7 @@ def transcribe_with_whisper(
         print(f"{ULTRASINGER_HEAD} VRAM Required: {blue_highlighted(model_info['vram_required'])}")
         print(f"{ULTRASINGER_HEAD} Speed: {blue_highlighted(model_info['relative_speed'])}")
         print(f"{ULTRASINGER_HEAD} Multilingual: {blue_highlighted(str(model_info['multilingual']))}")
-    
+
     # Estimate processing time
     try:
         import librosa
@@ -477,25 +477,25 @@ def transcribe_with_whisper(
         #Added handling for low detection probability
         if language_probability < Settings.CONFIDENCE_THRESHOLD:
             print(f"{ULTRASINGER_HEAD} {red_highlighted('Warning:')} Language detection probability for detected language {language} is below {Settings.CONFIDENCE_THRESHOLD}, results may be inaccurate.")
-            print(f"{ULTRASINGER_HEAD} Override the language below or re-run with parameter {blue_highlighted('--language xx')} to specify the song language...")    
-            try:  
-                response = inputimeout(  
-                    prompt=f"{ULTRASINGER_HEAD} Do you want to continue with {language} (default) or override with another language (y)? (y/n): ",  
-                    timeout=Settings.CONFIDENCE_PROMPT_TIMEOUT  
-                ).strip().lower()  
+            print(f"{ULTRASINGER_HEAD} Override the language below or re-run with parameter {blue_highlighted('--language xx')} to specify the song language...")
+            try:
+                response = inputimeout(
+                    prompt=f"{ULTRASINGER_HEAD} Do you want to continue with {language} (default) or override with another language (y)? (y/n): ",
+                    timeout=Settings.CONFIDENCE_PROMPT_TIMEOUT
+                ).strip().lower()
             except TimeoutOccurred:
                 import locale
                 print(f"{ULTRASINGER_HEAD} No user input received in {Settings.CONFIDENCE_PROMPT_TIMEOUT} seconds. Attempting automatic override with system locale.")
-                print(f"{ULTRASINGER_HEAD} Trying to get language from default locale...")  
+                print(f"{ULTRASINGER_HEAD} Trying to get language from default locale...")
                 current_locale = locale.getlocale()
-                if current_locale[0]:  
+                if current_locale[0]:
                     language_code = current_locale[0][:2].strip().lower()
                     print(f"{ULTRASINGER_HEAD} Found language code: {language_code} in locale. Setting language to {blue_highlighted(language_code)}...")
-                    language = language_code   
-                else:  
-                    print(f"{ULTRASINGER_HEAD} No locale is set.")  
+                    language = language_code
+                else:
+                    print(f"{ULTRASINGER_HEAD} No locale is set.")
                 response = 'n'
-            language_response = response == 'y'  
+            language_response = response == 'y'
             if language_response:
                 language = input(f"{ULTRASINGER_HEAD} Please enter the language code for the language you want to use (e.g. 'en', 'de', 'es', etc.): ").strip().lower()
         #End addition
@@ -516,7 +516,7 @@ def transcribe_with_whisper(
     # Info: Regardless of the audio sampling rate used in the original audio file, whisper resample the audio signal to 16kHz (via ffmpeg). So the standard input from (44.1 or 48 kHz) should work.
 
     print(f"{ULTRASINGER_HEAD} Loading {blue_highlighted('whisper')} with model {blue_highlighted(model.value)} and {red_highlighted(device)} as worker")
-    
+
     if alignment_model is not None:
         print(f"{ULTRASINGER_HEAD} using alignment model {blue_highlighted(alignment_model)}")
 
@@ -560,7 +560,7 @@ def transcribe_with_whisper(
             raise ve
 
         #Addition for numbers to words (Using previous code from louispan in PR#135)
-        if keep_numbers == False: 
+        if keep_numbers == False:
             for obj in result["segments"]:
                 obj["text"] = number_to_words(obj["text"], language)
 
@@ -576,7 +576,7 @@ def transcribe_with_whisper(
 
         transcribed_data = convert_to_transcribed_data(result_aligned)
         transcription_result = TranscriptionResult(transcribed_data, detected_language)
-        
+
         # Save to cache
         if cache_path:
             save_transcription_cache(cache_path, transcription_result)
@@ -605,9 +605,12 @@ def transcribe_with_whisper(
         print(f"  - Use CPU: --force_whisper_cpu")
         raise oom_exception
     except Exception as exception:
-        if "CUDA failed with error out of memory" in str(exception.args[0]):
-            print(exception)
-            print(MEMORY_ERROR_MESSAGE)
+        # Verificar se existe args antes de acessar (correção para whisperx 3.4.3+)
+        # Se usando whisperx 3.1.5, este código é redundante mas não causa problemas
+        if hasattr(exception, 'args') and len(exception.args) > 0:
+            if "CUDA failed with error out of memory" in str(exception.args[0]):
+                print(exception)
+                print(MEMORY_ERROR_MESSAGE)
         print(f"{ULTRASINGER_HEAD} {red_highlighted('Error:')} Transcription failed: {str(exception)}")
         raise exception
 
@@ -656,22 +659,22 @@ def validate_transcription_quality(transcribed_data: List[TranscribedData]) -> D
             "timing_gaps": 0,
             "quality_score": 0.0
         }
-    
+
     word_count = len(transcribed_data)
     timing_gaps = 0
-    
+
     # Check for timing gaps
     for i in range(1, len(transcribed_data)):
         if transcribed_data[i].start > transcribed_data[i-1].end + 0.5:  # Gap > 0.5s
             timing_gaps += 1
-    
+
     # Calculate quality score
     quality_score = 1.0
     if timing_gaps > word_count * 0.1:  # More than 10% gaps
         quality_score -= 0.3
     if word_count < 10:  # Very short transcription
         quality_score -= 0.2
-    
+
     return {
         "word_count": word_count,
         "timing_gaps": timing_gaps,
